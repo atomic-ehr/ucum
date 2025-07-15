@@ -21,7 +21,8 @@ type Expression =
   | BinaryOp
   | UnaryOp
   | Unit
-  | Factor;
+  | Factor
+  | Group;
 
 interface BinaryOp {
   type: 'binary';
@@ -41,6 +42,7 @@ interface Unit {
   prefix?: string;
   atom: string;
   exponent?: number;
+  exponentFormat?: '^' | '+' | '';  // How exponent was written
   annotation?: string;
 }
 
@@ -48,6 +50,11 @@ interface Factor {
   type: 'factor';
   value: number;
   annotation?: string;
+}
+
+interface Group {
+  type: 'group';
+  expression: Expression;
 }
 ```
 
@@ -64,7 +71,13 @@ Factors remain separate nodes rather than attributes because:
 - They are semantically different from units (dimensionless numbers)
 - They can appear independently in expressions: `10.m` or `10*6/mL`
 - Keeping them separate makes AST traversal clearer
-```
+
+### Design Rationale: Groups
+
+Group nodes preserve parentheses from the source:
+- Essential for correct operator precedence
+- `m/(s.s)` differs from `m/s.s` in evaluation order
+- Preserves user intent and enables accurate error messages
 
 ## Consequences
 
@@ -165,5 +178,23 @@ Expression `10.m` parses to:
   operator: '.',
   left: { type: 'factor', value: 10 },
   right: { type: 'unit', atom: 'm' }
+}
+```
+
+Expression `m/(s.s)` parses to:
+```typescript
+{
+  type: 'binary',
+  operator: '/',
+  left: { type: 'unit', atom: 'm' },
+  right: {
+    type: 'group',
+    expression: {
+      type: 'binary',
+      operator: '.',
+      left: { type: 'unit', atom: 's' },
+      right: { type: 'unit', atom: 's' }
+    }
+  }
 }
 ```

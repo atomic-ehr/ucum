@@ -1,42 +1,68 @@
 # Task: Refactor Dimensions to Object Representation
 
-## Status
-COMPLETED
+## Priority
+High
 
-## Summary
-Successfully refactored dimension representation from vector arrays to object notation as per ADR-001.
+## Related ADR
+[ADR-001: Dimension Representation](../../adr/001-dimension-representation.md)
 
-## Changes Made
+## Description
+Implement the decision from ADR-001 to refactor dimension representation from vectors to objects for better readability and developer experience.
 
-1. **Updated src/dimension.ts**
-   - Changed `DimensionVector` to `DimensionObject` type
-   - Updated all operations to work with objects
-   - Kept `DimensionType` enum for backward compatibility
-   - Modified `create()` to normalize objects (omit zero values)
+## Current State
+```typescript
+// Current vector representation
+type DimensionVector = readonly [number, number, number, number, number, number, number];
+const force = [1, 1, -2, 0, 0, 0, 0]; // Hard to read
+```
 
-2. **Updated scripts/extract-all-units.ts**
-   - Changed to generate dimension objects instead of arrays
-   - Updated type imports
+## Target State
+```typescript
+// New object representation
+type DimensionObject = {
+  L?: number;  // Length
+  M?: number;  // Mass
+  T?: number;  // Time
+  A?: number;  // Angle
+  Θ?: number;  // Temperature
+  Q?: number;  // Charge
+  F?: number;  // Luminosity
+};
+const force = { L: 1, M: 1, T: -2 }; // Clear and readable
+```
 
-3. **Regenerated src/units.ts**
-   - All units now have dimension objects like `{ L: 1 }` instead of `[1,0,0,0,0,0,0]`
+## Acceptance Criteria
+- [ ] Update `src/dimension.ts` to use object representation
+  - [ ] Change type definition to use objects
+  - [ ] Update `create()` function
+  - [ ] Update `fromObject()` function (simplify since it's already objects)
+  - [ ] Update `multiply()` to work with objects
+  - [ ] Update `divide()` to work with objects
+  - [ ] Update `power()` to work with objects
+  - [ ] Update `equals()` to compare objects
+  - [ ] Update `isDimensionless()` for objects
+  - [ ] Update `toString()` to work with objects
+  - [ ] Update all predefined dimensions
+- [ ] Update `scripts/extract-all-units.ts`
+  - [ ] Generate dimension objects instead of arrays
+  - [ ] Update type imports
+- [ ] Regenerate `src/units.ts` with new dimension format
+- [ ] Update `test/dimension.test.ts`
+  - [ ] Update all test cases to use object syntax
+  - [ ] Ensure all tests still pass
+- [ ] Update `scripts/test-dimensions.ts` to use objects
+- [ ] Run `bun tsc --noEmit` - no errors
+- [ ] Run `bun test` - all tests pass
 
-4. **Updated test/dimension.test.ts**
-   - All tests now use object syntax
-   - Added new tests for object-specific behavior
-   - All 34 tests passing
+## Implementation Steps
+2. Update dimension.ts type definitions and operations
+3. Update and run extraction script
+4. Update all tests
+5. Verify everything works
+6. Update documentation if needed
 
-5. **Updated scripts/test-dimensions.ts**
-   - Updated to use object representation
-   - All 18 tests passing
-
-## Verification
-- ✅ TypeScript compilation: No errors
-- ✅ Unit tests: 34/34 passing
-- ✅ Integration tests: 18/18 passing
-
-## Benefits Achieved
-- Much more readable code: `{ L: 1, M: 1, T: -2 }` vs `[1, 1, -2, 0, 0, 0, 0]`
-- Cleaner API with no need to remember dimension order
-- Smaller memory footprint (sparse representation)
-- Better developer experience as intended
+## Notes
+- This is a breaking change - but we ok with that
+- Change external API if needed
+- Performance impact expected to be minimal
+- Improved developer experience is the main goal
