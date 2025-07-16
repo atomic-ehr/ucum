@@ -118,7 +118,7 @@ export class Lexer {
       this.position++;
     } else {
       // Read letters
-      while (this.position < this.input.length && this.input[this.position] && this.isLetter(this.input[this.position])) {
+      while (this.position < this.input.length && this.input[this.position] && (this.isLetter(this.input[this.position]) || this.input[this.position] === '_')) {
         value += this.input[this.position++];
       }
     }
