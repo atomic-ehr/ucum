@@ -68,7 +68,7 @@ Simple:        m, kg, s
 Prefixed:      km (k + m), mg (m + g)
 Complex:       kg.m/s2 (mass × length ÷ time²)
 With powers:   m3/s (volume flow rate)
-Special:       Cel (Celsius), [lb_av] (pound)
+Special:       Cel (Celsius), pH, B[SPL] (see [special-units.md](./special-units.md))
 Annotated:     mg{total}/dL (concentration with context)
 ```
 
@@ -77,4 +77,5 @@ Annotated:     mg{total}/dL (concentration with context)
 ## References
 
 - [UCUM Grammar](./ucum-grammar.md) - How UCUM expressions are parsed
+- [Special Units](./special-units.md) - Units with non-linear conversions
 - [UCUM Specification](https://ucum.org/ucum) - The official UCUM specification

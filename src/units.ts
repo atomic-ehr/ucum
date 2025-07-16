@@ -10,7 +10,7 @@ export interface Unit {
   isBaseUnit?: boolean;
   class: string;
   name: string;
-  printSymbol: string;
+  printSymbol?: string;
   property: string;
   dim?: string;
   dimension?: DimensionObject;
@@ -527,7 +527,7 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "iso1000",
     name: "gon",
-    printSymbol: "[object Object]",
+    printSymbol: "<sup>g</sup>",
     property: "plane angle",
     value: {
       Unit: "deg",
@@ -657,7 +657,7 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "iso1000",
     name: "tropical year",
-    printSymbol: "[object Object]",
+    printSymbol: "a\n      <sub>t</sub>",
     property: "time",
     value: {
       Unit: "d",
@@ -670,7 +670,7 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "iso1000",
     name: "mean Julian year",
-    printSymbol: "[object Object]",
+    printSymbol: "a\n      <sub>j</sub>",
     property: "time",
     value: {
       Unit: "d",
@@ -683,7 +683,7 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "iso1000",
     name: "mean Gregorian year",
-    printSymbol: "[object Object]",
+    printSymbol: "a\n      <sub>g</sub>",
     property: "time",
     value: {
       Unit: "d",
@@ -722,7 +722,7 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "iso1000",
     name: "synodal month",
-    printSymbol: "[object Object]",
+    printSymbol: "mo\n      <sub>s</sub>",
     property: "time",
     value: {
       Unit: "d",
@@ -735,7 +735,7 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "iso1000",
     name: "mean Julian month",
-    printSymbol: "[object Object]",
+    printSymbol: "mo\n      <sub>j</sub>",
     property: "time",
     value: {
       Unit: "a_j/12",
@@ -748,7 +748,7 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "iso1000",
     name: "mean Gregorian month",
-    printSymbol: "[object Object]",
+    printSymbol: "mo\n      <sub>g</sub>",
     property: "time",
     value: {
       Unit: "a_g/12",
@@ -852,7 +852,7 @@ export const units: Record<string, Unit> = {
     isMetric: true,
     class: "const",
     name: "velocity of light",
-    printSymbol: "[object Object]",
+    printSymbol: "<i>c</i>",
     property: "velocity",
     value: {
       Unit: "m/s",
@@ -865,7 +865,7 @@ export const units: Record<string, Unit> = {
     isMetric: true,
     class: "const",
     name: "Planck constant",
-    printSymbol: "[object Object]",
+    printSymbol: "<i>h</i>",
     property: "action",
     value: {
       Unit: "J.s",
@@ -878,7 +878,7 @@ export const units: Record<string, Unit> = {
     isMetric: true,
     class: "const",
     name: "Boltzmann constant",
-    printSymbol: "[object Object]",
+    printSymbol: "<i>k</i>",
     property: "(unclassified)",
     value: {
       Unit: "J/K",
@@ -891,7 +891,7 @@ export const units: Record<string, Unit> = {
     isMetric: true,
     class: "const",
     name: "permittivity of vacuum",
-    printSymbol: "[object Object]",
+    printSymbol: "<i>ε\n         <sub><r>0</r></sub></i>",
     property: "electric permittivity",
     value: {
       Unit: "F/m",
@@ -904,7 +904,7 @@ export const units: Record<string, Unit> = {
     isMetric: true,
     class: "const",
     name: "permeability of vacuum",
-    printSymbol: "[object Object]",
+    printSymbol: "<i>μ\n         <sub><r>0</r></sub></i>",
     property: "magnetic permeability",
     value: {
       Unit: "4.[pi].10*-7.N/A2",
@@ -917,7 +917,7 @@ export const units: Record<string, Unit> = {
     isMetric: true,
     class: "const",
     name: "elementary charge",
-    printSymbol: "[object Object]",
+    printSymbol: "<i>e</i>",
     property: "electric charge",
     value: {
       Unit: "C",
@@ -930,7 +930,7 @@ export const units: Record<string, Unit> = {
     isMetric: true,
     class: "const",
     name: "electron mass",
-    printSymbol: "[object Object]",
+    printSymbol: "<i>m\n         <sub><r>e</r></sub></i>",
     property: "mass",
     value: {
       Unit: "kg",
@@ -943,7 +943,7 @@ export const units: Record<string, Unit> = {
     isMetric: true,
     class: "const",
     name: "proton mass",
-    printSymbol: "[object Object]",
+    printSymbol: "<i>m\n         <sub><r>p</r></sub></i>",
     property: "mass",
     value: {
       Unit: "kg",
@@ -956,7 +956,7 @@ export const units: Record<string, Unit> = {
     isMetric: true,
     class: "const",
     name: "Newtonian constant of gravitation",
-    printSymbol: "[object Object]",
+    printSymbol: "<i>G</i>",
     property: "(unclassified)",
     value: {
       Unit: "m3.kg-1.s-2",
@@ -969,7 +969,7 @@ export const units: Record<string, Unit> = {
     isMetric: true,
     class: "const",
     name: "standard acceleration of free fall",
-    printSymbol: "[object Object]",
+    printSymbol: "<i>g\n         <sub>n</sub></i>",
     property: "acceleration",
     value: {
       Unit: "m/s2",
@@ -1359,7 +1359,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "intcust",
     name: "square inch",
-    printSymbol: "",
     property: "area",
     value: {
       Unit: "[in_i]2",
@@ -1372,7 +1371,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "intcust",
     name: "square foot",
-    printSymbol: "",
     property: "area",
     value: {
       Unit: "[ft_i]2",
@@ -1385,7 +1383,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "intcust",
     name: "square yard",
-    printSymbol: "",
     property: "area",
     value: {
       Unit: "[yd_i]2",
@@ -1398,7 +1395,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "intcust",
     name: "cubic inch",
-    printSymbol: "",
     property: "volume",
     value: {
       Unit: "[in_i]3",
@@ -1411,7 +1407,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "intcust",
     name: "cubic foot",
-    printSymbol: "",
     property: "volume",
     value: {
       Unit: "[ft_i]3",
@@ -1437,7 +1432,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "intcust",
     name: "board foot",
-    printSymbol: "",
     property: "volume",
     value: {
       Unit: "[in_i]3",
@@ -1450,7 +1444,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "intcust",
     name: "cord",
-    printSymbol: "",
     property: "volume",
     value: {
       Unit: "[ft_i]3",
@@ -1502,7 +1495,7 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-lengths",
     name: "foot",
-    printSymbol: "[object Object]",
+    printSymbol: "ft\n      <sub>us</sub>",
     property: "length",
     value: {
       Unit: "m/3937",
@@ -1515,7 +1508,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-lengths",
     name: "yard",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[ft_us]",
@@ -1528,7 +1520,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-lengths",
     name: "inch",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[ft_us]/12",
@@ -1541,7 +1532,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-lengths",
     name: "rod",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[ft_us]",
@@ -1554,7 +1544,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-lengths",
     name: "Gunter's chain",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[rd_us]",
@@ -1567,7 +1556,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-lengths",
     name: "link for Gunter's chain",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[ch_us]/100",
@@ -1580,7 +1568,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-lengths",
     name: "Ramden's chain",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[ft_us]",
@@ -1593,7 +1580,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-lengths",
     name: "link for Ramden's chain",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[rch_us]/100",
@@ -1606,7 +1592,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-lengths",
     name: "fathom",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[ft_us]",
@@ -1619,7 +1604,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-lengths",
     name: "furlong",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[rd_us]",
@@ -1632,7 +1616,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-lengths",
     name: "mile",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[fur_us]",
@@ -1645,7 +1628,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-lengths",
     name: "acre",
-    printSymbol: "",
     property: "area",
     value: {
       Unit: "[rd_us]2",
@@ -1658,7 +1640,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-lengths",
     name: "square rod",
-    printSymbol: "",
     property: "area",
     value: {
       Unit: "[rd_us]2",
@@ -1671,7 +1652,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-lengths",
     name: "square mile",
-    printSymbol: "",
     property: "area",
     value: {
       Unit: "[mi_us]2",
@@ -1684,7 +1664,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-lengths",
     name: "section",
-    printSymbol: "",
     property: "area",
     value: {
       Unit: "[mi_us]2",
@@ -1697,7 +1676,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-lengths",
     name: "township",
-    printSymbol: "",
     property: "area",
     value: {
       Unit: "[sct]",
@@ -1710,7 +1688,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-lengths",
     name: "mil",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[in_us]",
@@ -1723,7 +1700,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "brit-length",
     name: "inch",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "cm",
@@ -1736,7 +1712,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "brit-length",
     name: "foot",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[in_br]",
@@ -1749,7 +1724,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "brit-length",
     name: "rod",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[ft_br]",
@@ -1762,7 +1736,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "brit-length",
     name: "Gunter's chain",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[rd_br]",
@@ -1775,7 +1748,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "brit-length",
     name: "link for Gunter's chain",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[ch_br]/100",
@@ -1788,7 +1760,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "brit-length",
     name: "fathom",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[ft_br]",
@@ -1801,7 +1772,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "brit-length",
     name: "pace",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[ft_br]",
@@ -1814,7 +1784,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "brit-length",
     name: "yard",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[ft_br]",
@@ -1827,7 +1796,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "brit-length",
     name: "mile",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[ft_br]",
@@ -1840,7 +1808,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "brit-length",
     name: "nautical mile",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[ft_br]",
@@ -1853,7 +1820,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "brit-length",
     name: "knot",
-    printSymbol: "",
     property: "velocity",
     value: {
       Unit: "[nmi_br]/h",
@@ -1866,7 +1832,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "brit-length",
     name: "acre",
-    printSymbol: "",
     property: "area",
     value: {
       Unit: "[yd_br]2",
@@ -1879,7 +1844,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-volumes",
     name: "Queen Anne's wine gallon",
-    printSymbol: "",
     property: "fluid volume",
     value: {
       Unit: "[in_i]3",
@@ -1892,7 +1856,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-volumes",
     name: "barrel",
-    printSymbol: "",
     property: "fluid volume",
     value: {
       Unit: "[gal_us]",
@@ -1905,7 +1868,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-volumes",
     name: "quart",
-    printSymbol: "",
     property: "fluid volume",
     value: {
       Unit: "[gal_us]/4",
@@ -1918,7 +1880,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-volumes",
     name: "pint",
-    printSymbol: "",
     property: "fluid volume",
     value: {
       Unit: "[qt_us]/2",
@@ -1931,7 +1892,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-volumes",
     name: "gill",
-    printSymbol: "",
     property: "fluid volume",
     value: {
       Unit: "[pt_us]/4",
@@ -1957,7 +1917,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-volumes",
     name: "fluid dram",
-    printSymbol: "",
     property: "fluid volume",
     value: {
       Unit: "[foz_us]/8",
@@ -1970,7 +1929,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-volumes",
     name: "minim",
-    printSymbol: "",
     property: "fluid volume",
     value: {
       Unit: "[fdr_us]/60",
@@ -1983,7 +1941,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-volumes",
     name: "cord",
-    printSymbol: "",
     property: "fluid volume",
     value: {
       Unit: "[ft_i]3",
@@ -1996,7 +1953,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-volumes",
     name: "bushel",
-    printSymbol: "",
     property: "dry volume",
     value: {
       Unit: "[in_i]3",
@@ -2009,7 +1965,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-volumes",
     name: "historical winchester gallon",
-    printSymbol: "",
     property: "dry volume",
     value: {
       Unit: "[bu_us]/8",
@@ -2022,7 +1977,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-volumes",
     name: "peck",
-    printSymbol: "",
     property: "dry volume",
     value: {
       Unit: "[bu_us]/4",
@@ -2035,7 +1989,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-volumes",
     name: "dry quart",
-    printSymbol: "",
     property: "dry volume",
     value: {
       Unit: "[pk_us]/8",
@@ -2048,7 +2001,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-volumes",
     name: "dry pint",
-    printSymbol: "",
     property: "dry volume",
     value: {
       Unit: "[dqt_us]/2",
@@ -2061,7 +2013,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-volumes",
     name: "tablespoon",
-    printSymbol: "",
     property: "volume",
     value: {
       Unit: "[foz_us]/2",
@@ -2074,7 +2025,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-volumes",
     name: "teaspoon",
-    printSymbol: "",
     property: "volume",
     value: {
       Unit: "[tbs_us]/3",
@@ -2087,7 +2037,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-volumes",
     name: "cup",
-    printSymbol: "",
     property: "volume",
     value: {
       Unit: "[tbs_us]",
@@ -2113,7 +2062,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-volumes",
     name: "metric cup",
-    printSymbol: "",
     property: "volume",
     value: {
       Unit: "mL",
@@ -2126,7 +2074,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-volumes",
     name: "metric teaspoon",
-    printSymbol: "",
     property: "volume",
     value: {
       Unit: "mL",
@@ -2139,7 +2086,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "us-volumes",
     name: "metric tablespoon",
-    printSymbol: "",
     property: "volume",
     value: {
       Unit: "mL",
@@ -2152,7 +2098,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "brit-volumes",
     name: "gallon",
-    printSymbol: "",
     property: "volume",
     value: {
       Unit: "l",
@@ -2165,7 +2110,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "brit-volumes",
     name: "peck",
-    printSymbol: "",
     property: "volume",
     value: {
       Unit: "[gal_br]",
@@ -2178,7 +2122,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "brit-volumes",
     name: "bushel",
-    printSymbol: "",
     property: "volume",
     value: {
       Unit: "[pk_br]",
@@ -2191,7 +2134,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "brit-volumes",
     name: "quart",
-    printSymbol: "",
     property: "volume",
     value: {
       Unit: "[gal_br]/4",
@@ -2204,7 +2146,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "brit-volumes",
     name: "pint",
-    printSymbol: "",
     property: "volume",
     value: {
       Unit: "[qt_br]/2",
@@ -2217,7 +2158,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "brit-volumes",
     name: "gill",
-    printSymbol: "",
     property: "volume",
     value: {
       Unit: "[pt_br]/4",
@@ -2230,7 +2170,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "brit-volumes",
     name: "fluid ounce",
-    printSymbol: "",
     property: "volume",
     value: {
       Unit: "[gil_br]/5",
@@ -2243,7 +2182,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "brit-volumes",
     name: "fluid dram",
-    printSymbol: "",
     property: "volume",
     value: {
       Unit: "[foz_br]/8",
@@ -2256,7 +2194,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "brit-volumes",
     name: "minim",
-    printSymbol: "",
     property: "volume",
     value: {
       Unit: "[fdr_br]/60",
@@ -2269,7 +2206,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "avoirdupois",
     name: "grain",
-    printSymbol: "",
     property: "mass",
     value: {
       Unit: "mg",
@@ -2308,7 +2244,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "avoirdupois",
     name: "dram",
-    printSymbol: "",
     property: "mass",
     value: {
       Unit: "[oz_av]/16",
@@ -2321,7 +2256,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "avoirdupois",
     name: "short hundredweight",
-    printSymbol: "",
     property: "mass",
     value: {
       Unit: "[lb_av]",
@@ -2334,7 +2268,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "avoirdupois",
     name: "long hundredweight",
-    printSymbol: "",
     property: "mass",
     value: {
       Unit: "[lb_av]",
@@ -2347,7 +2280,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "avoirdupois",
     name: "short ton",
-    printSymbol: "",
     property: "mass",
     value: {
       Unit: "[scwt_av]",
@@ -2360,7 +2292,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "avoirdupois",
     name: "long ton",
-    printSymbol: "",
     property: "mass",
     value: {
       Unit: "[lcwt_av]",
@@ -2373,7 +2304,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "avoirdupois",
     name: "stone",
-    printSymbol: "",
     property: "mass",
     value: {
       Unit: "[lb_av]",
@@ -2386,7 +2316,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "troy",
     name: "pennyweight",
-    printSymbol: "",
     property: "mass",
     value: {
       Unit: "[gr]",
@@ -2399,7 +2328,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "troy",
     name: "ounce",
-    printSymbol: "",
     property: "mass",
     value: {
       Unit: "[pwt_tr]",
@@ -2412,7 +2340,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "troy",
     name: "pound",
-    printSymbol: "",
     property: "mass",
     value: {
       Unit: "[oz_tr]",
@@ -2425,7 +2352,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "apoth",
     name: "scruple",
-    printSymbol: "",
     property: "mass",
     value: {
       Unit: "[gr]",
@@ -2438,7 +2364,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "apoth",
     name: "dram",
-    printSymbol: "",
     property: "mass",
     value: {
       Unit: "[sc_ap]",
@@ -2451,7 +2376,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "apoth",
     name: "ounce",
-    printSymbol: "",
     property: "mass",
     value: {
       Unit: "[dr_ap]",
@@ -2464,7 +2388,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "apoth",
     name: "pound",
-    printSymbol: "",
     property: "mass",
     value: {
       Unit: "[oz_ap]",
@@ -2477,7 +2400,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "apoth",
     name: "metric ounce",
-    printSymbol: "",
     property: "mass",
     value: {
       Unit: "g",
@@ -2490,7 +2412,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "typeset",
     name: "line",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[in_i]/12",
@@ -2503,7 +2424,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "typeset",
     name: "point",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[lne]/6",
@@ -2516,7 +2436,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "typeset",
     name: "pica",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[pnt]",
@@ -2529,7 +2448,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "typeset",
     name: "Printer's point",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[in_i]",
@@ -2542,7 +2460,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "typeset",
     name: "Printer's pica",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[pnt_pr]",
@@ -2555,7 +2472,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "typeset",
     name: "pied",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "cm",
@@ -2568,7 +2484,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "typeset",
     name: "pouce",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[pied]/12",
@@ -2581,7 +2496,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "typeset",
     name: "ligne",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[pouce]/12",
@@ -2594,7 +2508,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "typeset",
     name: "didot",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[ligne]/6",
@@ -2607,7 +2520,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "typeset",
     name: "cicero",
-    printSymbol: "",
     property: "length",
     value: {
       Unit: "[didot]",
@@ -2671,7 +2583,7 @@ export const units: Record<string, Unit> = {
     isMetric: true,
     class: "heat",
     name: "calorie at 15 °C",
-    printSymbol: "[object Object]",
+    printSymbol: "cal\n      <sub>15°C</sub>",
     property: "energy",
     value: {
       Unit: "J",
@@ -2684,7 +2596,7 @@ export const units: Record<string, Unit> = {
     isMetric: true,
     class: "heat",
     name: "calorie at 20 °C",
-    printSymbol: "[object Object]",
+    printSymbol: "cal\n      <sub>20°C</sub>",
     property: "energy",
     value: {
       Unit: "J",
@@ -2697,7 +2609,7 @@ export const units: Record<string, Unit> = {
     isMetric: true,
     class: "heat",
     name: "mean calorie",
-    printSymbol: "[object Object]",
+    printSymbol: "cal\n      <sub>m</sub>",
     property: "energy",
     value: {
       Unit: "J",
@@ -2710,7 +2622,7 @@ export const units: Record<string, Unit> = {
     isMetric: true,
     class: "heat",
     name: "international table calorie",
-    printSymbol: "[object Object]",
+    printSymbol: "cal\n      <sub>IT</sub>",
     property: "energy",
     value: {
       Unit: "J",
@@ -2723,7 +2635,7 @@ export const units: Record<string, Unit> = {
     isMetric: true,
     class: "heat",
     name: "thermochemical calorie",
-    printSymbol: "[object Object]",
+    printSymbol: "cal\n      <sub>th</sub>",
     property: "energy",
     value: {
       Unit: "J",
@@ -2762,7 +2674,7 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "heat",
     name: "British thermal unit at 39 °F",
-    printSymbol: "[object Object]",
+    printSymbol: "Btu\n      <sub>39°F</sub>",
     property: "energy",
     value: {
       Unit: "kJ",
@@ -2775,7 +2687,7 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "heat",
     name: "British thermal unit at 59 °F",
-    printSymbol: "[object Object]",
+    printSymbol: "Btu\n      <sub>59°F</sub>",
     property: "energy",
     value: {
       Unit: "kJ",
@@ -2788,7 +2700,7 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "heat",
     name: "British thermal unit at 60 °F",
-    printSymbol: "[object Object]",
+    printSymbol: "Btu\n      <sub>60°F</sub>",
     property: "energy",
     value: {
       Unit: "kJ",
@@ -2801,7 +2713,7 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "heat",
     name: "mean British thermal unit",
-    printSymbol: "[object Object]",
+    printSymbol: "Btu\n      <sub>m</sub>",
     property: "energy",
     value: {
       Unit: "kJ",
@@ -2814,7 +2726,7 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "heat",
     name: "international table British thermal unit",
-    printSymbol: "[object Object]",
+    printSymbol: "Btu\n      <sub>IT</sub>",
     property: "energy",
     value: {
       Unit: "kJ",
@@ -2827,7 +2739,7 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "heat",
     name: "thermochemical British thermal unit",
-    printSymbol: "[object Object]",
+    printSymbol: "Btu\n      <sub>th</sub>",
     property: "energy",
     value: {
       Unit: "kJ",
@@ -2853,7 +2765,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "heat",
     name: "horsepower",
-    printSymbol: "",
     property: "power",
     value: {
       Unit: "[ft_i].[lbf_av]/s",
@@ -2892,7 +2803,7 @@ export const units: Record<string, Unit> = {
     isMetric: true,
     class: "clinical",
     name: "meter of water column",
-    printSymbol: "[object Object]",
+    printSymbol: "m HO<sub><r>2</r></sub>",
     property: "pressure",
     value: {
       Unit: "kPa",
@@ -2918,7 +2829,7 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "clinical",
     name: "inch of water column",
-    printSymbol: "[object Object]",
+    printSymbol: "in HO<sub><r>2</r></sub>",
     property: "pressure",
     value: {
       Unit: "m[H2O].[in_i]/m",
@@ -3021,7 +2932,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "clinical",
     name: "mesh",
-    printSymbol: "",
     property: "lineic number",
     value: {
       Unit: "/[in_i]",
@@ -3441,7 +3351,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "chemical",
     name: "GPL unit",
-    printSymbol: "",
     property: "biologic activity of anticardiolipin IgG",
     value: {
       Unit: "1",
@@ -3454,7 +3363,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "chemical",
     name: "MPL unit",
-    printSymbol: "",
     property: "biologic activity of anticardiolipin IgM",
     value: {
       Unit: "1",
@@ -3467,7 +3375,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "chemical",
     name: "APL unit",
-    printSymbol: "",
     property: "biologic activity of anticardiolipin IgA",
     value: {
       Unit: "1",
@@ -3480,7 +3387,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "chemical",
     name: "Bethesda unit",
-    printSymbol: "",
     property: "biologic activity of factor VIII inhibitor",
     value: {
       Unit: "1",
@@ -3493,7 +3399,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "chemical",
     name: "anti factor Xa unit",
-    printSymbol: "",
     property: "biologic activity of factor Xa inhibitor (heparin)",
     value: {
       Unit: "1",
@@ -3506,7 +3411,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "chemical",
     name: "Todd unit",
-    printSymbol: "",
     property: "biologic activity antistreptolysin O",
     value: {
       Unit: "1",
@@ -3519,7 +3423,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "chemical",
     name: "Dye unit",
-    printSymbol: "",
     property: "biologic activity of amylase",
     value: {
       Unit: "1",
@@ -3532,7 +3435,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "chemical",
     name: "Somogyi unit",
-    printSymbol: "",
     property: "biologic activity of amylase",
     value: {
       Unit: "1",
@@ -3545,7 +3447,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "chemical",
     name: "Bodansky unit",
-    printSymbol: "",
     property: "biologic activity of phosphatase",
     value: {
       Unit: "1",
@@ -3558,7 +3459,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "chemical",
     name: "King-Armstrong unit",
-    printSymbol: "",
     property: "biologic activity of phosphatase",
     value: {
       Unit: "1",
@@ -3571,7 +3471,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "chemical",
     name: "Kunkel unit",
-    printSymbol: "",
     property: "arbitrary biologic activity",
     value: {
       Unit: "1",
@@ -3584,7 +3483,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "chemical",
     name: "Mac Lagan unit",
-    printSymbol: "",
     property: "arbitrary biologic activity",
     value: {
       Unit: "1",
@@ -3597,7 +3495,6 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "chemical",
     name: "tuberculin unit",
-    printSymbol: "",
     property: "biologic activity of tuberculin",
     value: {
       Unit: "1",
@@ -3610,7 +3507,7 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "chemical",
     name: "50% cell culture infectious dose",
-    printSymbol: "[object Object]",
+    printSymbol: "CCID\n      <sub>50</sub>",
     property: "biologic activity (infectivity) of an infectious agent preparation",
     value: {
       Unit: "1",
@@ -3623,7 +3520,7 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "chemical",
     name: "50% tissue culture infectious dose",
-    printSymbol: "[object Object]",
+    printSymbol: "TCID\n      <sub>50</sub>",
     property: "biologic activity (infectivity) of an infectious agent preparation",
     value: {
       Unit: "1",
@@ -3636,7 +3533,7 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "chemical",
     name: "50% embryo infectious dose",
-    printSymbol: "[object Object]",
+    printSymbol: "EID\n      <sub>50</sub>",
     property: "biologic activity (infectivity) of an infectious agent preparation",
     value: {
       Unit: "1",
@@ -4093,7 +3990,7 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "misc",
     name: "metric carat",
-    printSymbol: "[object Object]",
+    printSymbol: "ct\n      <sub>m</sub>",
     property: "mass",
     value: {
       Unit: "g",
@@ -4106,7 +4003,7 @@ export const units: Record<string, Unit> = {
     isMetric: false,
     class: "misc",
     name: "carat of gold alloys",
-    printSymbol: "[object Object]",
+    printSymbol: "ct\n      <sub><r>Au</r></sub>",
     property: "mass fraction",
     value: {
       Unit: "/24",
@@ -4178,7 +4075,7 @@ export const units: Record<string, Unit> = {
     isSpecial: true,
     class: "infotech",
     name: "bit",
-    printSymbol: "[object Object]",
+    printSymbol: "bit\n      <sub>s</sub>",
     property: "amount of information",
     value: {
       Unit: "ld(1 1)",

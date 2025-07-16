@@ -1,4 +1,4 @@
-import { parseStringPromise } from 'xml2js';
+import { parseStringPromise, Builder } from 'xml2js';
 import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import type { DimensionObject } from '../src/dimension';
@@ -10,7 +10,7 @@ interface Unit {
   isBaseUnit?: boolean;
   class: string;
   name: string;
-  printSymbol: string;
+  printSymbol?: string;
   property: string;
   dim?: string; // dimension for base units
   dimension?: DimensionObject; // dimension object
@@ -24,6 +24,53 @@ interface Unit {
       Unit: string;
     };
   };
+}
+
+// Helper function to convert printSymbol to string, preserving XML structure
+function printSymbolToString(printSymbol: any): string {
+  if (typeof printSymbol === 'string') {
+    return printSymbol.trim();
+  }
+  
+  // Handle object format with XML tags by reconstructing the inner XML
+  if (typeof printSymbol === 'object') {
+    // Use xml2js Builder to reconstruct the XML
+    const builder = new Builder({
+      headless: true,
+      renderOpts: { pretty: false }
+    });
+    
+    // Reconstruct the inner content as XML
+    function reconstructXML(obj: any): string {
+      if (typeof obj === 'string') {
+        return obj;
+      }
+      
+      let result = '';
+      
+      // Add text content if exists
+      if (obj._) {
+        result += obj._;
+      }
+      
+      // Process all XML elements
+      for (const [tag, content] of Object.entries(obj)) {
+        if (tag === '_' || tag === '$') continue;
+        
+        if (Array.isArray(content)) {
+          for (const item of content) {
+            result += `<${tag}>${reconstructXML(item)}</${tag}>`;
+          }
+        }
+      }
+      
+      return result;
+    }
+    
+    return reconstructXML(printSymbol).trim();
+  }
+  
+  return '';
 }
 
 async function extractAllUnits() {
@@ -70,7 +117,7 @@ async function extractAllUnits() {
       dim: unit.$.dim,
       dimension,
       name: unit.name[0],
-      printSymbol: unit.printSymbol[0],
+      ...(unit.printSymbol && { printSymbol: printSymbolToString(unit.printSymbol[0]) }),
       property: unit.property[0],
       value: {
         Unit: '1',
@@ -90,7 +137,7 @@ async function extractAllUnits() {
     const isSpecial = unit.$.isSpecial === 'yes' ? true : undefined;
     const unitClass = unit.$.class;
     const name = unit.name ? unit.name[0] : '';
-    const printSymbol = unit.printSymbol ? unit.printSymbol[0] : '';
+    const printSymbol = unit.printSymbol ? printSymbolToString(unit.printSymbol[0]) : undefined;
     const property = unit.property ? unit.property[0] : '';
     
     const value: Unit['value'] = {
@@ -114,7 +161,7 @@ async function extractAllUnits() {
       ...(isSpecial && { isSpecial }),
       class: unitClass,
       name,
-      printSymbol,
+      ...(printSymbol !== undefined && { printSymbol }),
       property,
       value
     };
@@ -133,7 +180,7 @@ export interface Unit {
   isBaseUnit?: boolean;
   class: string;
   name: string;
-  printSymbol: string;
+  printSymbol?: string;
   property: string;
   dim?: string;
   dimension?: DimensionObject;
@@ -168,9 +215,9 @@ ${Object.entries(unitMap)
     isBaseUnit: ${unit.isBaseUnit},` : ''}
     class: "${unit.class}",${unit.dim ? `
     dim: "${unit.dim}",` : ''}${dimensionStr}
-    name: "${unit.name}",
-    printSymbol: "${unit.printSymbol}",
-    property: "${unit.property}",
+    name: ${JSON.stringify(unit.name)},${unit.printSymbol !== undefined ? `
+    printSymbol: ${JSON.stringify(unit.printSymbol)},` : ''}
+    property: ${JSON.stringify(unit.property)},
     value: {
       Unit: "${unit.value.Unit}",
       UNIT: "${unit.value.UNIT}",

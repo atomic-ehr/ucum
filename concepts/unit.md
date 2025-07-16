@@ -21,10 +21,11 @@ A **unit** is an atomic measurement standard with a unique UCUM code.
 - Square brackets = "defined by convention"
 - Cannot take prefixes: no `k[ft_i]`
 
-**Special Units** (non-linear conversions)
+**[Special Units](./special-units.md)** (non-linear conversions)
 - `Cel` = °C (offset from K by 273.15)
 - `[degF]` = °F (scale + offset)
 - `pH` = -log₁₀[H+]
+- See [special-units.md](./special-units.md) for complete list and functions
 
 ## Prefixes
 
@@ -46,8 +47,8 @@ Each unit has:
 - **isMetric**: Can accept prefixes?
     According to UCUM §11, the `isMetric` property determines whether a unit can accept SI prefixes (k, m, μ, etc.).
     Only metric units can have prefixes - You cannot write `k[ft_i]` (kilo-foot)
-    Special units are typically non-metric** - Units with non-linear conversions
-- **isSpecial**: Needs special conversion?
+    Special units are typically non-metric - Units with non-linear conversions
+- **isSpecial**: Needs [special conversion functions](./special-units.md)?
 
 
 ## Usage

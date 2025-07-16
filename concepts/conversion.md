@@ -41,6 +41,7 @@ result = value × factor
 
 #### For Special Units (§21-23)
 Non-ratio scale units (e.g., °C, pH, dB) require special handling with conversion functions.
+See [special-units.md](./special-units.md) for a complete reference of all special units and their functions.
 
 ##### Special Function Definitions
 
