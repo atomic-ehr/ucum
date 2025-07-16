@@ -19,7 +19,7 @@ UCUM defines 7 fundamental base units that form the foundation of all measuremen
 | second | s | T | time |
 | gram | g | M | mass |
 | radian | rad | A | plane angle |
-| kelvin | K | C | temperature |
+| kelvin | K | Θ (C in UCUM) | temperature |
 | coulomb | C | Q | electric charge |
 | candela | cd | F | luminous intensity |
 
@@ -28,8 +28,9 @@ UCUM defines 7 fundamental base units that form the foundation of all measuremen
 A canonical form consists of:
 
 1. **Magnitude**: A single numeric value combining all conversion factors
-2. **Base unit terms**: Each base unit with its exponent
-3. **Special function** (optional): For non-linear conversions like temperature
+2. **Dimension**: Powers of the 7 base dimensions represented as an object (e.g., `{L: 2, T: -1}`)
+3. **Base unit terms**: Each base unit with its exponent
+4. **Special function** (optional): For non-linear conversions like temperature
 
 ## Examples
 
@@ -44,13 +45,13 @@ A canonical form consists of:
 
 ### Derived Units
 
-| Unit | Canonical Form | Derivation |
-|------|----------------|------------|
-| `N` (newton) | `1 × kg·m·s⁻²` | Force = mass × acceleration |
-| `Pa` (pascal) | `1 × kg·m⁻¹·s⁻²` | Pressure = force/area |
-| `J` (joule) | `1 × kg·m²·s⁻²` | Energy = force × distance |
-| `W` (watt) | `1 × kg·m²·s⁻³` | Power = energy/time |
-| `V` (volt) | `1 × kg·m²·s⁻³·C⁻¹` | Voltage = power/current |
+| Unit | Canonical Form | Dimension | Derivation |
+|------|----------------|-----------|------------|
+| `N` (newton) | `1 × kg·m·s⁻²` | `{L: 1, T: -2, M: 1}` | Force = mass × acceleration |
+| `Pa` (pascal) | `1 × kg·m⁻¹·s⁻²` | `{L: -1, T: -2, M: 1}` | Pressure = force/area |
+| `J` (joule) | `1 × kg·m²·s⁻²` | `{L: 2, T: -2, M: 1}` | Energy = force × distance |
+| `W` (watt) | `1 × kg·m²·s⁻³` | `{L: 2, T: -3, M: 1}` | Power = energy/time |
+| `V` (volt) | `1 × kg·m²·s⁻³·C⁻¹` | `{L: 2, T: -3, M: 1, Q: -1}` | Voltage = power/current |
 
 ### Complex Expressions
 
@@ -61,6 +62,8 @@ A canonical form consists of:
 | `cal/g.K` | `4184 × m²·s⁻²·K⁻¹` | 4.184 J / (g·K) |
 
 ## Conversion Algorithm
+
+The canonical form calculation follows the UCUM specification (§18-20 for proper units, §21-23 for special units).
 
 ### Step 1: Parse Expression
 
@@ -89,7 +92,8 @@ Break down the unit string into components:
 2. **Collect base units**: Group by base unit type
 3. **Sum exponents**: For each base unit, add all exponents
 4. **Remove zeros**: Drop units with exponent = 0
-5. **Sort**: Order base units consistently (alphabetically)
+5. **Calculate dimension object**: Create object with non-zero dimensions (e.g., `{L: 2, T: -1}`)
+6. **Sort**: Order base units consistently for canonical representation
 
 ## Use Cases
 
@@ -125,7 +129,7 @@ kg·m/s² × s²/m → kg (simplified)
 
 ## Special Units
 
-Some units require special handling beyond linear scaling:
+Some units require special handling beyond linear scaling. See [special-units.md](./special-units.md) for a complete reference.
 
 ### Temperature
 - **Celsius**: `Cel = K - 273.15`
@@ -138,6 +142,8 @@ These use conversion functions rather than simple multiplication.
 - **Bel**: `B = log₁₀(P/P₀)`
 
 These represent ratios or logarithms, not direct measurements.
+
+For special units, the canonical form includes the special function in addition to the magnitude and base units.
 
 ## Implementation Example
 
@@ -199,11 +205,27 @@ milli- (m)  → 10⁻³
 micro- (μ)  → 10⁻⁶
 ```
 
-### Dimension Vectors
-Canonical forms can be represented as dimension vectors:
+### Dimensions
+Canonical forms include dimensions represented as objects:
 ```
-m²/s → [2, -1, 0, 0, 0, 0, 0]
-      [L, T, M, A, C, Q, F]
+m²/s → {L: 2, T: -1}
+```
+
+Only non-zero dimensions are included in the object. The possible dimensions are:
+- L: Length (meter)
+- T: Time (second)  
+- M: Mass (gram)
+- A: Angle (radian)
+- Θ: Temperature (kelvin)
+- Q: Electric charge (coulomb)
+- F: Luminous intensity (candela)
+
+Examples:
+```
+kg·m/s²  → {M: 1, L: 1, T: -2}    // Force
+m³       → {L: 3}                  // Volume
+Hz       → {T: -1}                 // Frequency
+A·s      → {Q: 1}                  // Electric charge
 ```
 
 ### Common Conversions

@@ -10,7 +10,8 @@ Please be concise and to the point.
 * ./adr is a folder for Architecture Decision Records.
 * ./concepts is a wiki like knowledge base for the project.
 * ./tasks is a folder for task management (read ./tasks/README.md for more details)
-   Task file name convetion is [00<X>-<task-name>].md
+   Task file name convention is [00<X>-<task-name>].md
+   When creating new tasks, create them in ./tasks/todo/<filename>.md
    When working on tasks move files to ./tasks/in-progress/<filename>.md
    When task finished move files to ./tasks/done/<filename>.md and write what was done in this file.
 * ./test is a folder for tests - tests should be named as ./test/<filename>.test.ts by convention.

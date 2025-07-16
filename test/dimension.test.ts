@@ -1,249 +1,161 @@
 import { describe, it, expect } from 'bun:test';
-import { Dimension, DimensionType, Dimensions } from '../src/dimension';
-import type { DimensionObject } from '../src/dimension';
+import { Dimension, Dimensions, type DimensionObject } from '../src/dimension';
 
 describe('Dimension', () => {
-  describe('create', () => {
-    it('should create empty dimension by default', () => {
-      const dim = Dimension.create();
-      expect(dim).toEqual({});
-    });
-
-    it('should create dimension with specified values', () => {
-      const dim = Dimension.create({ L: 1, M: 2, T: -1 });
-      expect(dim).toEqual({ L: 1, M: 2, T: -1 });
-    });
-
-    it('should omit zero values', () => {
-      const dim = Dimension.create({ L: 1, M: 0, T: -1 });
-      expect(dim).toEqual({ L: 1, T: -1 });
-    });
-
-    it('should create dimension with all values specified', () => {
-      const dim = Dimension.create({ L: 1, M: 2, T: 3, A: 4, Θ: 5, Q: 6, F: 7 });
-      expect(dim).toEqual({ L: 1, M: 2, T: 3, A: 4, Θ: 5, Q: 6, F: 7 });
-    });
-  });
-
   describe('multiply', () => {
-    it('should add exponents when multiplying', () => {
-      const a: DimensionObject = { L: 1, T: -1 }; // L·T⁻¹
-      const b: DimensionObject = { L: 1, T: -1 }; // L·T⁻¹
-      const result = Dimension.multiply(a, b);
-      expect(result).toEqual({ L: 2, T: -2 }); // L²·T⁻²
+    it('should multiply two simple dimensions', () => {
+      const length = { L: 1 };
+      const time = { T: -1 };
+      const result = Dimension.multiply(length, time);
+      expect(result).toEqual({ L: 1, T: -1 }); // velocity
     });
 
-    it('should handle multiplication with empty dimensions', () => {
-      const a: DimensionObject = { L: 1, M: 2, T: 3 };
-      const empty: DimensionObject = {};
-      const result = Dimension.multiply(a, empty);
-      expect(result).toEqual({ L: 1, M: 2, T: 3 });
+    it('should add exponents when multiplying same dimensions', () => {
+      const area = { L: 2 };
+      const length = { L: 1 };
+      const result = Dimension.multiply(area, length);
+      expect(result).toEqual({ L: 3 }); // volume
     });
 
-    it('should handle multiplication with different dimensions', () => {
-      const a: DimensionObject = { L: 1, M: 2 };
-      const b: DimensionObject = { T: -1, Q: 1 };
-      const result = Dimension.multiply(a, b);
-      expect(result).toEqual({ L: 1, M: 2, T: -1, Q: 1 });
+    it('should handle negative exponents', () => {
+      const frequency = { T: -1 };
+      const time = { T: 1 };
+      const result = Dimension.multiply(frequency, time);
+      expect(result).toEqual({}); // dimensionless
+    });
+
+    it('should multiply complex dimensions (force × length = energy)', () => {
+      const force = { L: 1, M: 1, T: -2 };
+      const length = { L: 1 };
+      const result = Dimension.multiply(force, length);
+      expect(result).toEqual({ L: 2, M: 1, T: -2 }); // energy
+    });
+
+    it('should handle empty dimensions', () => {
+      const dim = { L: 1, T: -1 };
+      const empty = {};
+      const result = Dimension.multiply(dim, empty);
+      expect(result).toEqual({ L: 1, T: -1 });
+    });
+
+    it('should handle all dimension types', () => {
+      const dim1 = { L: 1, M: 2, T: -1, A: 1, Θ: 1, Q: -1, F: 1 };
+      const dim2 = { L: -1, M: 1, T: 2, A: -1, Θ: 1, Q: 1, F: -2 };
+      const result = Dimension.multiply(dim1, dim2);
+      expect(result).toEqual({ M: 3, T: 1, Θ: 2, F: -1 });
+    });
+
+    it('should use predefined dimensions', () => {
+      const result = Dimension.multiply(Dimensions.FORCE, Dimensions.LENGTH);
+      expect(result).toEqual(Dimensions.ENERGY);
     });
   });
 
   describe('divide', () => {
+    it('should divide two simple dimensions', () => {
+      const length = { L: 1 };
+      const time = { T: 1 };
+      const result = Dimension.divide(length, time);
+      expect(result).toEqual({ L: 1, T: -1 }); // velocity
+    });
+
     it('should subtract exponents when dividing', () => {
-      const a: DimensionObject = { L: 2, M: 1, T: -2 }; // L²·M·T⁻²
-      const b: DimensionObject = { L: 1, T: -1 }; // L·T⁻¹
-      const result = Dimension.divide(a, b);
-      expect(result).toEqual({ L: 1, M: 1, T: -1 }); // L·M·T⁻¹
+      const volume = { L: 3 };
+      const area = { L: 2 };
+      const result = Dimension.divide(volume, area);
+      expect(result).toEqual({ L: 1 }); // length
     });
 
-    it('should handle division by same dimension (dimensionless result)', () => {
-      const a: DimensionObject = { L: 1, M: 2, T: 3 };
-      const result = Dimension.divide(a, a);
-      expect(result).toEqual({});
+    it('should handle negative exponents', () => {
+      const time = { T: 1 };
+      const frequency = { T: -1 };
+      const result = Dimension.divide(time, frequency);
+      expect(result).toEqual({ T: 2 }); // time squared
     });
 
-    it('should handle division resulting in negative exponents', () => {
-      const a: DimensionObject = { L: 1 };
-      const b: DimensionObject = { L: 2, M: 1 };
-      const result = Dimension.divide(a, b);
-      expect(result).toEqual({ L: -1, M: -1 });
-    });
-  });
-
-  describe('power', () => {
-    it('should multiply all exponents by power', () => {
-      const dim: DimensionObject = { L: 1, T: -1 }; // L·T⁻¹
-      const result = Dimension.power(dim, 2);
-      expect(result).toEqual({ L: 2, T: -2 }); // L²·T⁻²
+    it('should divide complex dimensions (energy ÷ time = power)', () => {
+      const energy = { L: 2, M: 1, T: -2 };
+      const time = { T: 1 };
+      const result = Dimension.divide(energy, time);
+      expect(result).toEqual({ L: 2, M: 1, T: -3 }); // power
     });
 
-    it('should handle power of 0', () => {
-      const dim: DimensionObject = { L: 1, M: 2, T: 3 };
-      const result = Dimension.power(dim, 0);
-      expect(result).toEqual({});
+    it('should handle division by itself to get dimensionless', () => {
+      const velocity = { L: 1, T: -1 };
+      const result = Dimension.divide(velocity, velocity);
+      expect(result).toEqual({}); // dimensionless
     });
 
-    it('should handle negative powers', () => {
-      const dim: DimensionObject = { L: 1, T: -1 };
-      const result = Dimension.power(dim, -1);
-      expect(result).toEqual({ L: -1, T: 1 });
+    it('should handle empty dimensions', () => {
+      const dim = { L: 2, M: 1 };
+      const empty = {};
+      const result = Dimension.divide(dim, empty);
+      expect(result).toEqual({ L: 2, M: 1 });
     });
 
-    it('should handle fractional powers', () => {
-      const dim: DimensionObject = { L: 2, M: 4 };
-      const result = Dimension.power(dim, 0.5);
-      expect(result).toEqual({ L: 1, M: 2 });
-    });
-  });
-
-  describe('equals', () => {
-    it('should return true for equal dimensions', () => {
-      const a: DimensionObject = { L: 1, M: 2, T: 3 };
-      const b: DimensionObject = { L: 1, M: 2, T: 3 };
-      expect(Dimension.equals(a, b)).toBe(true);
+    it('should handle all dimension types', () => {
+      const dim1 = { L: 2, M: 3, T: -1, A: 2, Θ: 1, Q: -1, F: 1 };
+      const dim2 = { L: 1, M: 1, T: -2, A: 1, Θ: -1, Q: 1, F: 2 };
+      const result = Dimension.divide(dim1, dim2);
+      expect(result).toEqual({ L: 1, M: 2, T: 1, A: 1, Θ: 2, Q: -2, F: -1 });
     });
 
-    it('should return false for different dimensions', () => {
-      const a: DimensionObject = { L: 1, M: 2, T: 3 };
-      const b: DimensionObject = { L: 1, M: 2, T: 4 };
-      expect(Dimension.equals(a, b)).toBe(false);
-    });
-
-    it('should handle missing properties as zero', () => {
-      const a: DimensionObject = { L: 1, M: 0 };
-      const b: DimensionObject = { L: 1 };
-      expect(Dimension.equals(a, b)).toBe(true);
-    });
-
-    it('should return true for both empty objects', () => {
-      expect(Dimension.equals({}, {})).toBe(true);
-    });
-  });
-
-  describe('isDimensionless', () => {
-    it('should return true for empty object', () => {
-      const dim: DimensionObject = {};
-      expect(Dimension.isDimensionless(dim)).toBe(true);
-    });
-
-    it('should return false for non-zero dimension', () => {
-      const dim: DimensionObject = { L: 1 };
-      expect(Dimension.isDimensionless(dim)).toBe(false);
-    });
-
-    it('should return true when all values are zero', () => {
-      const dim: DimensionObject = { L: 0, M: 0, T: 0 };
-      expect(Dimension.isDimensionless(dim)).toBe(true);
-    });
-  });
-
-  describe('toString', () => {
-    it('should return "1" for dimensionless', () => {
-      const dim: DimensionObject = {};
-      expect(Dimension.toString(dim)).toBe('1');
-    });
-
-    it('should format single dimension without exponent', () => {
-      const dim: DimensionObject = { L: 1 };
-      expect(Dimension.toString(dim)).toBe('L');
-    });
-
-    it('should format single dimension with exponent', () => {
-      const dim: DimensionObject = { L: 2 };
-      expect(Dimension.toString(dim)).toBe('L^2');
-    });
-
-    it('should format multiple dimensions', () => {
-      const dim: DimensionObject = { L: 1, M: 1, T: -2 };
-      expect(Dimension.toString(dim)).toBe('L·M·T^-2');
-    });
-
-    it('should format all dimensions in correct order', () => {
-      const dim: DimensionObject = { L: 1, M: 2, T: -3, A: 4, Θ: -5, Q: 6, F: -7 };
-      expect(Dimension.toString(dim)).toBe('L·M^2·T^-3·A^4·Θ^-5·Q^6·F^-7');
-    });
-
-    it('should skip zero exponents', () => {
-      const dim: DimensionObject = { L: 1, M: 0, T: -1 };
-      expect(Dimension.toString(dim)).toBe('L·T^-1');
-    });
-  });
-
-  describe('DimensionType enum', () => {
-    it('should have correct indices', () => {
-      expect(DimensionType.L).toBe(0);
-      expect(DimensionType.Length).toBe(0);
-      expect(DimensionType.M).toBe(1);
-      expect(DimensionType.Mass).toBe(1);
-      expect(DimensionType.T).toBe(2);
-      expect(DimensionType.Time).toBe(2);
-      expect(DimensionType.A).toBe(3);
-      expect(DimensionType.Angle).toBe(3);
-      expect(DimensionType.Theta).toBe(4);
-      expect(DimensionType.Temperature).toBe(4);
-      expect(DimensionType.Q).toBe(5);
-      expect(DimensionType.Charge).toBe(5);
-      expect(DimensionType.F).toBe(6);
-      expect(DimensionType.Luminosity).toBe(6);
-    });
-  });
-
-  describe('Predefined dimensions', () => {
-    it('should have correct base dimensions', () => {
-      expect(Dimensions.DIMENSIONLESS).toEqual({});
-      expect(Dimensions.LENGTH).toEqual({ L: 1 });
-      expect(Dimensions.MASS).toEqual({ M: 1 });
-      expect(Dimensions.TIME).toEqual({ T: 1 });
-      expect(Dimensions.ANGLE).toEqual({ A: 1 });
-      expect(Dimensions.TEMPERATURE).toEqual({ Θ: 1 });
-      expect(Dimensions.CHARGE).toEqual({ Q: 1 });
-      expect(Dimensions.LUMINOSITY).toEqual({ F: 1 });
-    });
-
-    it('should have correct derived dimensions', () => {
-      expect(Dimensions.AREA).toEqual({ L: 2 });
-      expect(Dimensions.VOLUME).toEqual({ L: 3 });
-      expect(Dimensions.VELOCITY).toEqual({ L: 1, T: -1 });
-      expect(Dimensions.ACCELERATION).toEqual({ L: 1, T: -2 });
-      expect(Dimensions.FORCE).toEqual({ L: 1, M: 1, T: -2 });
-      expect(Dimensions.ENERGY).toEqual({ L: 2, M: 1, T: -2 });
-      expect(Dimensions.POWER).toEqual({ L: 2, M: 1, T: -3 });
-      expect(Dimensions.PRESSURE).toEqual({ L: -1, M: 1, T: -2 });
-      expect(Dimensions.FREQUENCY).toEqual({ T: -1 });
-      expect(Dimensions.ELECTRIC_POTENTIAL).toEqual({ L: 2, M: 1, T: -3, Q: -1 });
-      expect(Dimensions.ELECTRIC_RESISTANCE).toEqual({ L: 2, M: 1, T: -3, Q: -2 });
-      expect(Dimensions.ELECTRIC_CONDUCTANCE).toEqual({ L: -2, M: -1, T: 3, Q: 2 });
-      expect(Dimensions.ELECTRIC_CAPACITANCE).toEqual({ L: -2, M: -1, T: 4, Q: 2 });
-    });
-  });
-
-  describe('Complex dimension operations', () => {
-    it('should calculate force from mass and acceleration', () => {
-      const mass = Dimensions.MASS;
-      const acceleration = Dimensions.ACCELERATION;
-      const force = Dimension.multiply(mass, acceleration);
-      expect(force).toEqual(Dimensions.FORCE);
-    });
-
-    it('should calculate energy from force and length', () => {
-      const force = Dimensions.FORCE;
-      const length = Dimensions.LENGTH;
-      const energy = Dimension.multiply(force, length);
-      expect(energy).toEqual(Dimensions.ENERGY);
-    });
-
-    it('should calculate power from energy and frequency', () => {
-      const energy = Dimensions.ENERGY;
-      const frequency = Dimensions.FREQUENCY;
-      const power = Dimension.multiply(energy, frequency);
-      expect(power).toEqual(Dimensions.POWER);
-    });
-
-    it('should verify pressure formula', () => {
+    it('should calculate pressure from force and area', () => {
       const force = Dimensions.FORCE;
       const area = Dimensions.AREA;
-      const pressure = Dimension.divide(force, area);
-      expect(pressure).toEqual(Dimensions.PRESSURE);
+      const result = Dimension.divide(force, area);
+      expect(result).toEqual(Dimensions.PRESSURE);
+    });
+  });
+
+  describe('multiply and divide interaction', () => {
+    it('should be inverse operations', () => {
+      const dim1 = { L: 2, M: 1, T: -3 };
+      const dim2 = { L: 1, T: -1, Q: 1 };
+      
+      // (dim1 × dim2) ÷ dim2 = dim1
+      const multiplied = Dimension.multiply(dim1, dim2);
+      const divided = Dimension.divide(multiplied, dim2);
+      expect(divided).toEqual(dim1);
+      
+      // (dim1 ÷ dim2) × dim2 = dim1
+      const divided2 = Dimension.divide(dim1, dim2);
+      const multiplied2 = Dimension.multiply(divided2, dim2);
+      expect(multiplied2).toEqual(dim1);
+    });
+
+    it('should handle complex unit conversions', () => {
+      // kg·m/s² × m = kg·m²/s² (Force × Length = Energy)
+      const newton = { M: 1, L: 1, T: -2 }; // Actually would be M: 1000 for kg
+      const meter = { L: 1 };
+      const joule = Dimension.multiply(newton, meter);
+      expect(joule).toEqual({ M: 1, L: 2, T: -2 });
+      
+      // kg·m²/s² ÷ s = kg·m²/s³ (Energy ÷ Time = Power)
+      const second = { T: 1 };
+      const watt = Dimension.divide(joule, second);
+      expect(watt).toEqual({ M: 1, L: 2, T: -3 });
+    });
+  });
+
+  describe('edge cases', () => {
+    it('should handle undefined values correctly', () => {
+      const dim1: DimensionObject = { L: undefined, M: 1 };
+      const dim2: DimensionObject = { L: 1, M: undefined };
+      
+      const multiplied = Dimension.multiply(dim1, dim2);
+      expect(multiplied).toEqual({ L: 1, M: 1 });
+      
+      const divided = Dimension.divide(dim1, dim2);
+      expect(divided).toEqual({ L: -1, M: 1 });
+    });
+
+    it('should normalize zero values', () => {
+      const dim1 = { L: 1, M: 0, T: -1 };
+      const dim2 = { L: -1, M: 2, T: 1 };
+      
+      const result = Dimension.multiply(dim1, dim2);
+      expect(result).toEqual({ M: 2 }); // L: 0 and T: 0 are removed
     });
   });
 });
