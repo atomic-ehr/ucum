@@ -43,11 +43,19 @@ function getUnitDefinition(unit: string): Expression | null {
   // Special units have function notation like "cel(1 K)"
   if (unitData.isSpecial && unitData.value.function) {
     // Parse the unit inside the function (e.g., "1 K" from "cel(1 K)")
-    return parseUnit(unitData.value.function.Unit);
+    const result = parseUnit(unitData.value.function.Unit);
+    if (result.errors.length > 0) {
+      throw new Error(`Failed to parse unit definition for ${unit}: ${result.errors[0]?.message || 'Unknown error'}`);
+    }
+    return result.ast || null;
   }
   
   // Regular units just have the unit expression
-  return parseUnit(unitData.value.Unit);
+  const result = parseUnit(unitData.value.Unit);
+  if (result.errors.length > 0) {
+    throw new Error(`Failed to parse unit definition for ${unit}: ${result.errors[0]?.message || 'Unknown error'}`);
+  }
+  return result.ast || null;
 }
 
 function normalizeUnits(units: BaseUnitTerm[]): BaseUnitTerm[] {
@@ -249,6 +257,12 @@ export function toCanonicalFormFromAST(expr: Expression): CanonicalForm {
 }
 
 export function toCanonicalForm(unitExpression: string): CanonicalForm {
-  const ast = parseUnit(unitExpression);
-  return toCanonicalFormFromAST(ast);
+  const result = parseUnit(unitExpression);
+  if (result.errors.length > 0) {
+    throw new Error(result.errors[0]?.message || 'Unknown parse error');
+  }
+  if (!result.ast) {
+    throw new Error('No AST generated');
+  }
+  return toCanonicalFormFromAST(result.ast);
 }

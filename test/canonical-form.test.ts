@@ -366,8 +366,9 @@ describe('Canonical Form', () => {
 
   describe('AST Processing', () => {
     it('should process AST directly', () => {
-      const ast = parseUnit('km/h');
-      const result = toCanonicalFormFromAST(ast);
+      const parseResult = parseUnit('km/h');
+      expect(parseResult.errors).toHaveLength(0);
+      const result = toCanonicalFormFromAST(parseResult.ast!);
       expect(result.magnitude).toBeCloseTo(0.277778, 5);
       expect(result.dimension).toEqual({ L: 1, T: -1 });
     });

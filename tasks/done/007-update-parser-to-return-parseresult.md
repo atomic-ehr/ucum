@@ -1,5 +1,44 @@
 # Task 007: Update Parser to Return ParseResult
 
+## Completion Notes
+
+**Completed:** 2025-07-16
+
+### What was done:
+
+1. **Created ParseResult types** (`src/parser/types.ts`):
+   - `ParseResult` with ast, errors, warnings, and input
+   - `ParseError` with position and length tracking
+   - `ParseWarning` for non-critical issues
+
+2. **Enhanced Token with position info**:
+   - Added `length` field to Token interface
+   - Updated Lexer to track token length for all token types
+
+3. **Transformed Parser to error-aware version**:
+   - Parser now collects errors instead of throwing
+   - Implements error recovery (synchronization, partial AST)
+   - Reports warnings for long annotations
+   - Always returns ParseResult
+
+4. **Updated all dependent code**:
+   - `canonical-form.ts` handles ParseResult
+   - Updated exports in index files
+   - Updated all parser tests to use new API
+   - Added error handling tests
+
+5. **Test coverage**:
+   - All 105 tests passing
+   - TypeScript compilation successful
+   - Error position tracking verified
+   - Warning detection working
+
+### Key implementation details:
+- Parser continues after errors when possible
+- Errors include accurate position and length
+- Warning system for ambiguous syntax
+- Backward compatibility not maintained (as per ADR-005)
+
 ## Objective
 Update the parser to return a ParseResult object containing AST, errors, and warnings instead of throwing exceptions. This is a prerequisite for implementing proper unit validation.
 

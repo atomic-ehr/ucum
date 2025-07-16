@@ -13,8 +13,8 @@ Featres:
 interface Quantity { 
     value: number;
     unit: string;
-    _unitTerms: UnitTerms; // internal
-    _canonical: Canonical; // internal
+    unitTerms: UnitTerms; // internal
+    canonical: Canonical; // internal
 }
 
 interface ucum {
@@ -71,8 +71,8 @@ ucum.info('kg/s');
     isMetric: true,
     symbol: "kg/s",
     dimension: {g: 1, s: -1},
-    _unitTerms:  {} as ucum.UnitTerms,
-    _canonical: {dimention: {g: 1, s: -1}, magnitude: 10} as ucum.Canonical // internal
+    unitTerms:  {} as ucum.UnitTerms,
+    canonical: {dimention: {g: 1, s: -1}, magnitude: 10} as ucum.Canonical // internal
 }
 
 ucum.display('kg{dry_mass}/s', {locale: 'en-US'});

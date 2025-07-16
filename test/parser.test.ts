@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'bun:test';
 import { parseUnit } from '../src/parser/parser';
 import type { Expression } from '../src/parser/ast';
+import { expectParseSuccess, expectParseError } from './test-utils';
 
 describe('UCUM Parser', () => {
   describe('Basic units', () => {
@@ -16,36 +17,37 @@ describe('UCUM Parser', () => {
       ];
 
       for (const [input, expected] of cases) {
-        expect(parseUnit(input)).toEqual(expected);
+        const result = parseUnit(input);
+        expectParseSuccess(result, expected);
       }
     });
 
     it('parses units with prefixes', () => {
-      expect(parseUnit('mg')).toEqual({
+      expectParseSuccess(parseUnit('mg'), {
         type: 'unit',
         prefix: 'm',
         atom: 'g'
       });
 
-      expect(parseUnit('km')).toEqual({
+      expectParseSuccess(parseUnit('km'), {
         type: 'unit',
         prefix: 'k',
         atom: 'm'
       });
 
-      expect(parseUnit('ns')).toEqual({
+      expectParseSuccess(parseUnit('ns'), {
         type: 'unit',
         prefix: 'n',
         atom: 's'
       });
 
-      expect(parseUnit('dL')).toEqual({
+      expectParseSuccess(parseUnit('dL'), {
         type: 'unit',
         prefix: 'd',
         atom: 'L'
       });
 
-      expect(parseUnit('dam')).toEqual({
+      expectParseSuccess(parseUnit('dam'), {
         type: 'unit',
         prefix: 'da',
         atom: 'm'
@@ -55,13 +57,13 @@ describe('UCUM Parser', () => {
 
   describe('Exponents', () => {
     it('parses direct exponents', () => {
-      expect(parseUnit('m2')).toEqual({
+      expectParseSuccess(parseUnit('m2'), {
         type: 'unit',
         atom: 'm',
         exponent: 2
       });
 
-      expect(parseUnit('s3')).toEqual({
+      expectParseSuccess(parseUnit('s3'), {
         type: 'unit',
         atom: 's',
         exponent: 3
@@ -69,14 +71,14 @@ describe('UCUM Parser', () => {
     });
 
     it('parses caret exponents', () => {
-      expect(parseUnit('m^2')).toEqual({
+      expectParseSuccess(parseUnit('m^2'), {
         type: 'unit',
         atom: 'm',
         exponent: 2,
         exponentFormat: '^'
       });
 
-      expect(parseUnit('s^-1')).toEqual({
+      expectParseSuccess(parseUnit('s^-1'), {
         type: 'unit',
         atom: 's',
         exponent: -1,
@@ -85,14 +87,14 @@ describe('UCUM Parser', () => {
     });
 
     it('parses signed exponents', () => {
-      expect(parseUnit('m+2')).toEqual({
+      expectParseSuccess(parseUnit('m+2'), {
         type: 'unit',
         atom: 'm',
         exponent: 2,
         exponentFormat: '+'
       });
 
-      expect(parseUnit('s-2')).toEqual({
+      expectParseSuccess(parseUnit('s-2'), {
         type: 'unit',
         atom: 's',
         exponent: -2,
@@ -103,14 +105,14 @@ describe('UCUM Parser', () => {
 
   describe('Binary operations', () => {
     it('parses multiplication', () => {
-      expect(parseUnit('m.s')).toEqual({
+      expectParseSuccess(parseUnit('m.s'), {
         type: 'binary',
         operator: '.',
         left: { type: 'unit', atom: 'm' },
         right: { type: 'unit', atom: 's' }
       });
 
-      expect(parseUnit('kg.m')).toEqual({
+      expectParseSuccess(parseUnit('kg.m'), {
         type: 'binary',
         operator: '.',
         left: { type: 'unit', prefix: 'k', atom: 'g' },
@@ -119,14 +121,14 @@ describe('UCUM Parser', () => {
     });
 
     it('parses division', () => {
-      expect(parseUnit('m/s')).toEqual({
+      expectParseSuccess(parseUnit('m/s'), {
         type: 'binary',
         operator: '/',
         left: { type: 'unit', atom: 'm' },
         right: { type: 'unit', atom: 's' }
       });
 
-      expect(parseUnit('mg/dL')).toEqual({
+      expectParseSuccess(parseUnit('mg/dL'), {
         type: 'binary',
         operator: '/',
         left: { type: 'unit', prefix: 'm', atom: 'g' },
@@ -135,14 +137,14 @@ describe('UCUM Parser', () => {
     });
 
     it('parses complex expressions with correct associativity', () => {
-      expect(parseUnit('m.s-2')).toEqual({
+      expectParseSuccess(parseUnit('m.s-2'), {
         type: 'binary',
         operator: '.',
         left: { type: 'unit', atom: 'm' },
         right: { type: 'unit', atom: 's', exponent: -2, exponentFormat: '+' }
       });
 
-      expect(parseUnit('kg.m/s2')).toEqual({
+      expectParseSuccess(parseUnit('kg.m/s2'), {
         type: 'binary',
         operator: '/',
         left: {
@@ -158,13 +160,13 @@ describe('UCUM Parser', () => {
 
   describe('Leading division', () => {
     it('parses unary division', () => {
-      expect(parseUnit('/s')).toEqual({
+      expectParseSuccess(parseUnit('/s'), {
         type: 'unary',
         operator: '/',
         operand: { type: 'unit', atom: 's' }
       });
 
-      expect(parseUnit('/m2')).toEqual({
+      expectParseSuccess(parseUnit('/m2'), {
         type: 'unary',
         operator: '/',
         operand: { type: 'unit', atom: 'm', exponent: 2 }
@@ -174,7 +176,7 @@ describe('UCUM Parser', () => {
 
   describe('Parentheses', () => {
     it('parses grouped expressions', () => {
-      expect(parseUnit('(m/s)')).toEqual({
+      expectParseSuccess(parseUnit('(m/s)'), {
         type: 'group',
         expression: {
           type: 'binary',
@@ -184,7 +186,7 @@ describe('UCUM Parser', () => {
         }
       });
 
-      expect(parseUnit('m/(s.s)')).toEqual({
+      expectParseSuccess(parseUnit('m/(s.s)'), {
         type: 'binary',
         operator: '/',
         left: { type: 'unit', atom: 'm' },
@@ -201,7 +203,7 @@ describe('UCUM Parser', () => {
     });
 
     it('parses complex nested expressions', () => {
-      expect(parseUnit('(m/s)/s')).toEqual({
+      expectParseSuccess(parseUnit('(m/s)/s'), {
         type: 'binary',
         operator: '/',
         left: {
@@ -220,14 +222,14 @@ describe('UCUM Parser', () => {
 
   describe('Annotations', () => {
     it('parses unit annotations', () => {
-      expect(parseUnit('mg{total}')).toEqual({
+      expectParseSuccess(parseUnit('mg{total}'), {
         type: 'unit',
         prefix: 'm',
         atom: 'g',
         annotation: 'total'
       });
 
-      expect(parseUnit('mL{RBC}')).toEqual({
+      expectParseSuccess(parseUnit('mL{RBC}'), {
         type: 'unit',
         prefix: 'm',
         atom: 'L',
@@ -236,13 +238,13 @@ describe('UCUM Parser', () => {
     });
 
     it('parses standalone annotations', () => {
-      expect(parseUnit('{RBC}')).toEqual({
+      expectParseSuccess(parseUnit('{RBC}'), {
         type: 'factor',
         value: 1,
         annotation: 'RBC'
       });
 
-      expect(parseUnit('{cells}')).toEqual({
+      expectParseSuccess(parseUnit('{cells}'), {
         type: 'factor',
         value: 1,
         annotation: 'cells'
@@ -250,7 +252,7 @@ describe('UCUM Parser', () => {
     });
 
     it('parses factor annotations', () => {
-      expect(parseUnit('10{cells}')).toEqual({
+      expectParseSuccess(parseUnit('10{cells}'), {
         type: 'factor',
         value: 10,
         annotation: 'cells'
@@ -258,7 +260,7 @@ describe('UCUM Parser', () => {
     });
 
     it('parses annotations in complex expressions', () => {
-      expect(parseUnit('mg{total}/dL')).toEqual({
+      expectParseSuccess(parseUnit('mg{total}/dL'), {
         type: 'binary',
         operator: '/',
         left: { type: 'unit', prefix: 'm', atom: 'g', annotation: 'total' },
@@ -269,26 +271,26 @@ describe('UCUM Parser', () => {
 
   describe('Factors', () => {
     it('parses integer factors', () => {
-      expect(parseUnit('10')).toEqual({
+      expectParseSuccess(parseUnit('10'), {
         type: 'factor',
         value: 10
       });
 
-      expect(parseUnit('100')).toEqual({
+      expectParseSuccess(parseUnit('100'), {
         type: 'factor',
         value: 100
       });
     });
 
     it('parses factors with units', () => {
-      expect(parseUnit('10.m')).toEqual({
+      expectParseSuccess(parseUnit('10.m'), {
         type: 'binary',
         operator: '.',
         left: { type: 'factor', value: 10 },
         right: { type: 'unit', atom: 'm' }
       });
 
-      expect(parseUnit('10.mL')).toEqual({
+      expectParseSuccess(parseUnit('10.mL'), {
         type: 'binary',
         operator: '.',
         left: { type: 'factor', value: 10 },
@@ -299,26 +301,26 @@ describe('UCUM Parser', () => {
 
   describe('Special notation units', () => {
     it('parses 10* and 10^ units', () => {
-      expect(parseUnit('10*')).toEqual({
+      expectParseSuccess(parseUnit('10*'), {
         type: 'unit',
         atom: '10*'
       });
 
-      expect(parseUnit('10^')).toEqual({
+      expectParseSuccess(parseUnit('10^'), {
         type: 'unit',
         atom: '10^'
       });
     });
 
     it('parses special units in expressions', () => {
-      expect(parseUnit('10*6/mL')).toEqual({
+      expectParseSuccess(parseUnit('10*6/mL'), {
         type: 'binary',
         operator: '/',
         left: { type: 'unit', atom: '10*', exponent: 6 },
         right: { type: 'unit', prefix: 'm', atom: 'L' }
       });
 
-      expect(parseUnit('10^-9.m')).toEqual({
+      expectParseSuccess(parseUnit('10^-9.m'), {
         type: 'binary',
         operator: '.',
         left: { type: 'unit', atom: '10^', exponent: -9, exponentFormat: '+' },
@@ -329,21 +331,21 @@ describe('UCUM Parser', () => {
 
   describe('Complex real-world examples', () => {
     it('parses clinical units', () => {
-      expect(parseUnit('mmol/L')).toEqual({
+      expectParseSuccess(parseUnit('mmol/L'), {
         type: 'binary',
         operator: '/',
         left: { type: 'unit', prefix: 'm', atom: 'mol' },
         right: { type: 'unit', atom: 'L' }
       });
 
-      expect(parseUnit('U/mL')).toEqual({
+      expectParseSuccess(parseUnit('U/mL'), {
         type: 'binary',
         operator: '/',
         left: { type: 'unit', atom: 'U' },
         right: { type: 'unit', prefix: 'm', atom: 'L' }
       });
 
-      expect(parseUnit('ng/mL')).toEqual({
+      expectParseSuccess(parseUnit('ng/mL'), {
         type: 'binary',
         operator: '/',
         left: { type: 'unit', prefix: 'n', atom: 'g' },
@@ -352,21 +354,21 @@ describe('UCUM Parser', () => {
     });
 
     it('parses physics units', () => {
-      expect(parseUnit('N.m')).toEqual({
+      expectParseSuccess(parseUnit('N.m'), {
         type: 'binary',
         operator: '.',
         left: { type: 'unit', atom: 'N' },
         right: { type: 'unit', atom: 'm' }
       });
 
-      expect(parseUnit('J/K')).toEqual({
+      expectParseSuccess(parseUnit('J/K'), {
         type: 'binary',
         operator: '/',
         left: { type: 'unit', atom: 'J' },
         right: { type: 'unit', atom: 'K' }
       });
 
-      expect(parseUnit('W/(m2.K)')).toEqual({
+      expectParseSuccess(parseUnit('W/(m2.K)'), {
         type: 'binary',
         operator: '/',
         left: { type: 'unit', atom: 'W' },
@@ -381,5 +383,34 @@ describe('UCUM Parser', () => {
         }
       });
     });
+  });
+});
+
+describe('Error Handling', () => {
+  it('reports syntax errors', () => {
+    const result = parseUnit('kg..m');
+    expectParseError(result);
+    expect(result.errors[0]?.type).toBe('unexpected_token');
+    expect(result.errors[0]?.position).toBe(3);
+  });
+
+  it('reports unexpected EOF', () => {
+    const result = parseUnit('kg/');
+    expectParseError(result);
+    expect(result.errors[0]?.type).toBe('unexpected_eof');
+  });
+
+  it('reports missing closing parenthesis', () => {
+    const result = parseUnit('(kg.m');
+    expectParseError(result);
+    expect(result.errors[0]?.message).toContain('closing parenthesis');
+  });
+
+  it('provides warnings for long annotations', () => {
+    const longAnnotation = 'a'.repeat(60);
+    const result = parseUnit(`kg{${longAnnotation}}`);
+    console.log(result);
+    expect(result.warnings.length).toBeGreaterThan(0);
+    expect(result.warnings[0]?.type).toBe('ambiguous');
   });
 });

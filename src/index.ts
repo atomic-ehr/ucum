@@ -3,6 +3,7 @@
 // Parser
 export { parseUnit } from './parser';
 export type { Expression, Unit, Factor, BinaryOp, UnaryOp, Group } from './parser/ast';
+export type { ParseResult, ParseError, ParseWarning } from './parser/types';
 
 // Units database
 export { units, baseUnits } from './units';
@@ -28,3 +29,7 @@ export {
   ConversionError,
   IncompatibleDimensionsError
 } from './conversion';
+
+// Unit validation
+export { validate } from './validation';
+export type { ValidationResult, ValidationError, ValidationWarning } from './validation';

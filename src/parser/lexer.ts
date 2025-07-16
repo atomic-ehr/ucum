@@ -18,6 +18,7 @@ export interface Token {
   type: TokenType;
   value: string;
   position: number;
+  length: number;
 }
 
 export class Lexer {
@@ -66,7 +67,7 @@ export class Lexer {
       }
     }
     
-    this.addToken('EOF', '');
+    this.tokens.push({ type: 'EOF', value: '', position: this.position, length: 0 });
     return this.tokens;
   }
 
@@ -94,7 +95,7 @@ export class Lexer {
       this.position++;
     }
     const value = this.input.slice(start, this.position);
-    this.tokens.push({ type: 'DIGIT', value, position: start });
+    this.tokens.push({ type: 'DIGIT', value, position: start, length: value.length });
   }
 
   private readAtomOrPrefix(): void {
@@ -124,11 +125,11 @@ export class Lexer {
     }
     
     // For now, mark everything as ATOM - the parser will disambiguate
-    this.tokens.push({ type: 'ATOM', value, position: start });
+    this.tokens.push({ type: 'ATOM', value, position: start, length: value.length });
   }
 
   private addToken(type: TokenType, value: string): void {
-    this.tokens.push({ type, value, position: this.position });
+    this.tokens.push({ type, value, position: this.position, length: value.length });
     this.position++;
   }
 }
