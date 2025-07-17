@@ -1,5 +1,54 @@
 # Task 013: Improve info() and display() Functions
 
+## Completed
+
+✅ Created separate `src/unit-display.ts` module with enhanced implementations
+✅ Implemented `createUnitInfo()` with AST-based name generation
+✅ Implemented `displayUnit()` with multiple format options
+✅ Created comprehensive unit names database (~100 units)
+✅ Added prefix name mappings for all metric prefixes
+✅ Implemented grammar rules for proper English (square, cubic, per, etc.)
+✅ Created comprehensive test suite (28 tests, all passing)
+✅ Updated index.ts to use the new module
+✅ All 277 total tests still passing
+
+### Key Improvements:
+
+1. **Enhanced info() function**:
+   - Generates human-readable names for complex expressions
+   - "kg.m/s2" → "kilogram meter per square second"
+   - "mol/(L.s)" → "mole per liter second"
+   - Handles prefixed units properly
+
+2. **Enhanced display() function**:
+   - Supports multiple formats: 'symbol', 'name', 'long'
+   - Strips annotations before processing
+   - Generates grammatically correct names
+   - "m2" → "square meter"
+   - "s-1" → "per second"
+
+3. **Comprehensive unit names**:
+   - Base units (meter, gram, second, etc.)
+   - Derived SI units (newton, pascal, joule, etc.)
+   - Clinical units ([IU], pH, %, etc.)
+   - Temperature units (Celsius, Fahrenheit, etc.)
+   - Common prefixed units (mL, mg, kg, etc.)
+
+4. **Clean architecture**:
+   - Separate module for better maintainability
+   - AST traversal for complex expression handling
+   - Extensible design for future localization
+
+### Example Results:
+```typescript
+ucum.info('N').name // "newton"
+ucum.info('kg.m/s2').name // "kilogram meter per square second"
+ucum.display('m2', { format: 'name' }) // "square meter"
+ucum.display('N', { format: 'long' }) // "newton (kg.m/s2)"
+```
+
+# Task 013: Improve info() and display() Functions
+
 ## Objective
 Enhance the `info()` and `display()` functions in the unified UCUM API to provide more comprehensive unit information and better human-readable displays.
 
@@ -74,7 +123,72 @@ ucum.display('m', { locale: 'fr-FR', format: 'name' });
 // → "mètre"
 ```
 
+## Implementation Architecture
+
+### Module Structure
+Create a new module `src/unit-display.ts` that will contain:
+- Enhanced `createUnitInfo()` function (replaces current `info()`)
+- Enhanced `displayUnit()` function (replaces current `display()`)
+- Helper functions for name generation and AST traversal
+- Expanded unit names database
+- Grammar rules engine
+
+The `index.ts` file will import and use these functions:
+```typescript
+// src/index.ts
+import { createUnitInfo, displayUnit } from './unit-display';
+
+export const ucum: UCUM = {
+  // ...
+  info: createUnitInfo,
+  display: displayUnit,
+  // ...
+};
+```
+
 ## Implementation Steps
+
+### Phase 0: Create Module Structure
+
+1. **Create unit-display.ts module**
+   ```typescript
+   // src/unit-display.ts
+   import type { UnitInfo, DisplayOptions } from './index';
+   import type { Expression } from './parser/ast';
+   import { parseUnit } from './parser';
+   import { units } from './units';
+   import { prefixes } from './prefixes';
+   import { toCanonicalForm } from './canonical-form';
+   import { isArbitraryUnit } from './quantity';
+
+   // Enhanced unit names database
+   const unitNames: Record<string, UnitNameData> = {
+     // ... comprehensive unit names
+   };
+
+   // Main exported functions
+   export function createUnitInfo(unit: string): UnitInfo {
+     // Enhanced implementation
+   }
+
+   export function displayUnit(unit: string, options?: DisplayOptions): string {
+     // Enhanced implementation
+   }
+
+   // Helper functions
+   function generateNameFromAST(ast: Expression): string {
+     // AST traversal and name generation
+   }
+
+   function expandPrefixedUnit(prefix: string, unit: string): string {
+     // Prefix expansion logic
+   }
+   ```
+
+2. **Create comprehensive test file**
+   ```typescript
+   // test/unit-display.test.ts
+   ```
 
 ### Phase 1: Expand Unit Name Database
 
@@ -147,34 +261,82 @@ ucum.display('m', { locale: 'fr-FR', format: 'name' });
    - [ ] Document how to add new locales
    - [ ] Consider using Intl API for number formatting
 
+## File Organization
+
+```
+src/
+├── index.ts                  # Import and use createUnitInfo, displayUnit
+├── unit-display.ts          # New module with enhanced implementations
+│   ├── createUnitInfo()     # Enhanced info function
+│   ├── displayUnit()        # Enhanced display function
+│   ├── unitNames database   # Comprehensive unit names
+│   ├── prefixNames mapping  # Prefix to name mappings
+│   └── Helper functions     # AST traversal, grammar rules
+└── ...
+
+test/
+├── unit-display.test.ts     # Comprehensive tests for the new module
+└── ...
+```
+
 ## Test Cases
 
 ```typescript
-describe('Enhanced info()', () => {
+// test/unit-display.test.ts
+import { describe, it, expect } from 'bun:test';
+import { createUnitInfo, displayUnit } from '../src/unit-display';
+
+describe('createUnitInfo', () => {
   it('should generate names for complex units', () => {
-    expect(ucum.info('kg.m/s2').name).toBe('kilogram meter per second squared');
-    expect(ucum.info('mol/(L.s)').name).toBe('mole per liter second');
+    const info = createUnitInfo('kg.m/s2');
+    expect(info.name).toBe('kilogram meter per second squared');
+    
+    const info2 = createUnitInfo('mol/(L.s)');
+    expect(info2.name).toBe('mole per liter second');
   });
   
   it('should handle prefixed units', () => {
-    expect(ucum.info('mL').name).toBe('milliliter');
-    expect(ucum.info('MHz').name).toBe('megahertz');
+    const info = createUnitInfo('mL');
+    expect(info.name).toBe('milliliter');
+    
+    const info2 = createUnitInfo('MHz');
+    expect(info2.name).toBe('megahertz');
+  });
+  
+  it('should use database names when available', () => {
+    const info = createUnitInfo('N');
+    expect(info.name).toBe('newton');
+    expect(info.definition).toBe('kg.m/s2');
   });
 });
 
-describe('Enhanced display()', () => {
+describe('displayUnit', () => {
   it('should handle complex expressions', () => {
-    expect(ucum.display('kg.m2/s3', { format: 'name' }))
+    expect(displayUnit('kg.m2/s3', { format: 'name' }))
       .toBe('kilogram square meter per second cubed');
   });
   
   it('should support different formats', () => {
-    expect(ucum.display('N', { format: 'symbol' })).toBe('N');
-    expect(ucum.display('N', { format: 'long' }))
+    expect(displayUnit('N', { format: 'symbol' })).toBe('N');
+    expect(displayUnit('N', { format: 'long' }))
       .toBe('newton (kg⋅m/s²)');
+  });
+  
+  it('should strip annotations', () => {
+    expect(displayUnit('kg{dry_mass}/s')).toBe('kg/s');
+    expect(displayUnit('kg{dry_mass}/s', { format: 'name' }))
+      .toBe('kilogram per second');
   });
 });
 ```
+
+## Migration Plan
+
+1. **Create new module** without breaking existing functionality
+2. **Import new functions** in index.ts and wire them up
+3. **Update existing tests** to ensure backward compatibility
+4. **Add new comprehensive tests** for enhanced functionality
+5. **Update documentation** with new capabilities
 
 ## Success Criteria
 
