@@ -37,16 +37,79 @@ function hasSpecialUnits(from: CanonicalForm, to: CanonicalForm): boolean {
   return isSpecialUnit(from) || isSpecialUnit(to);
 }
 
-// Get the base unit magnitude without the special function scale factor
-function getBaseUnitMagnitude(canonical: CanonicalForm): number {
-  if (!canonical.specialFunction) {
-    return canonical.magnitude;
+// Get the base special unit's magnitude (without any prefix)
+function getBaseSpecialUnitMagnitude(specialFunctionName: string): number {
+  // Base special units and their magnitudes in canonical form
+  // These are the magnitudes that appear in the canonical form for the base unit (no prefix)
+  const baseSpecialMagnitudes: Record<string, number> = {
+    'Cel': 1,                // Celsius: canonical magnitude = 1
+    'degF': 0.5555555555555556, // Fahrenheit: 5/9 ≈ 0.5556
+    'degRe': 1.25,           // Réaumur: 5/4 = 1.25
+    'pH': 1e-9,              // pH: mol/L reference, canonical magnitude = 1e-9
+    'ln': 1,                 // Natural log (Neper)
+    'lg': 1,                 // Common log (Bel)
+    'lgTimes2': 1,           // 2*log10 (B[SPL], B[V], etc.) - varies by reference unit
+    'ld': 1,                 // Binary log (bit)
+    'hpX': 1,                // Homeopathic decimal
+    'hpC': 1,                // Homeopathic centesimal
+    'hpM': 1,                // Homeopathic millesimal
+    'hpQ': 1,                // Homeopathic quintamillesimal
+    'tanTimes100': 1,        // Prism diopter  
+    '100tan': 0.017453292519943295, // Percent slope: deg canonical magnitude
+    'sqrt': 1                // Square root
+  };
+  
+  return baseSpecialMagnitudes[specialFunctionName] || 1;
+}
+
+// Calculate scale factor for special units that can have prefixes
+function getScaleFactor(canonical: CanonicalForm): number {
+  if (!canonical.specialFunction) return 1;
+  
+  // Only certain special units can have prefixes (isMetric="yes" in UCUM)
+  const metricSpecialUnits = ['Cel', 'ln', 'lg', 'lgTimes2', 'ld'];
+  
+  if (!metricSpecialUnits.includes(canonical.specialFunction.name)) {
+    return 1; // Non-metric special units can't have prefixes
   }
   
-  // For special units, the magnitude in the canonical form already includes
-  // the base unit conversion. We just need to return it.
-  // The scale factor (if any) comes from prefixes, not from the special function itself.
-  return canonical.magnitude;
+  // For metric special units, we need to be careful about detecting prefixes
+  // The challenge is that some special units like B[W] have non-1 magnitudes
+  // due to their reference units, not due to prefixes
+  
+  // For temperature (Cel), the base magnitude is always 1
+  if (canonical.specialFunction.name === 'Cel' && Math.abs(canonical.magnitude - 1) > 1e-10) {
+    return canonical.magnitude; // This is a prefix like mCel
+  }
+  
+  // For logarithmic units (lg, ln, ld), only B, Np, and bit_s have magnitude 1 as base
+  // B[W], B[SPL], etc. have different magnitudes due to their reference units
+  if (canonical.specialFunction.name === 'lg') {
+    // Only plain B has magnitude 1, prefixed versions like dB have 0.1
+    if (canonical.magnitude === 1) return 1; // Plain B
+    if (Math.abs(canonical.magnitude - 0.1) < 1e-10) return 0.1; // dB
+    if (Math.abs(canonical.magnitude - 0.01) < 1e-10) return 0.01; // cB
+    // B[W], B[SPL] etc. have other magnitudes - don't treat as prefixed
+    return 1;
+  }
+  
+  if (canonical.specialFunction.name === 'ln') {
+    // Neper and its prefixed versions
+    if (canonical.magnitude === 1) return 1; // Plain Np
+    if (Math.abs(canonical.magnitude - 0.001) < 1e-10) return 0.001; // mNp
+    return 1;
+  }
+  
+  if (canonical.specialFunction.name === 'ld') {
+    // bit_s and its prefixed versions
+    if (canonical.magnitude === 1) return 1; // Plain bit_s
+    return 1;
+  }
+  
+  // For lgTimes2 (B[SPL], B[V], etc.), the magnitude varies with reference unit
+  // So we can't use this approach - just return 1 for now
+  
+  return 1;
 }
 
 // Convert between units with special functions
@@ -57,10 +120,9 @@ function convertWithSpecialFunctions(
 ): number {
   let result = value;
   
-  // For now, we'll implement scale factor support later
-  // Focus on getting the basic special function conversions working
-  const fromScale = 1;
-  const toScale = 1;
+  // Extract scale factors for prefixed special units
+  const fromScale = getScaleFactor(fromCanonical);
+  const toScale = getScaleFactor(toCanonical);
   
   // Step 1: Convert FROM special unit to proper unit
   if (fromCanonical.specialFunction) {
@@ -78,8 +140,9 @@ function convertWithSpecialFunctions(
       );
     }
     
-    // Apply inverse function to get value in proper units
-    result = fn.inverse(result);
+    // Apply inverse function with scale: m = f_s⁻¹(α × r_s) × u
+    // where r_s is our input value and α is fromScale
+    result = fn.inverse(fromScale * result);
     
     // Check that the result is valid for the proper unit
     if (fn.inputDomain && !fn.inputDomain(result)) {
@@ -98,9 +161,11 @@ function convertWithSpecialFunctions(
     // The result from the inverse function is in the reference unit
     // We need to convert from reference unit to target unit
     // But not for temperature functions where the magnitude is part of the definition
+    // Also skip if this is a prefixed special unit (scale factor != 1)
     if (!fromCanonical.specialFunction.name.includes('deg') && 
         fromCanonical.specialFunction.name !== 'Cel' &&
-        fromCanonical.specialFunction.name !== 'degRe') {
+        fromCanonical.specialFunction.name !== 'degRe' &&
+        fromScale === 1) {
       result = result * (fromCanonical.magnitude / toCanonical.magnitude);
     }
   } else if (!fromCanonical.specialFunction && toCanonical.specialFunction) {
@@ -136,8 +201,9 @@ function convertWithSpecialFunctions(
       );
     }
     
-    // Apply forward function to get value in special unit
-    result = fn.forward(result);
+    // Apply forward function with scale: r_s = f_s(m/u) / α
+    // where result is m/u and we divide by α (toScale) to get r_s
+    result = fn.forward(result) / toScale;
     
     // Check output domain
     if (fn.outputDomain && !fn.outputDomain(result)) {

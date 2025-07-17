@@ -53,7 +53,7 @@ describe('Special Function Conversions', () => {
   });
 
   describe('Prefixed Special Units', () => {
-    it.skip('should convert millidegree Celsius', () => {
+    it('should convert millidegree Celsius', () => {
       // TODO: Implement scale factor support for prefixed special units
       expect(convert(1000, 'mCel', 'Cel')).toBe(1); // 1000 mCel = 1 Cel
       expect(convert(1, 'Cel', 'mCel')).toBe(1000); // 1 Cel = 1000 mCel
@@ -61,7 +61,7 @@ describe('Special Function Conversions', () => {
       expect(convert(0, 'mCel', 'K')).toBe(273.15); // 0 mCel = 0°C = 273.15 K
     });
 
-    it.skip('should convert decibel (dB = deci-bel)', () => {
+    it('should convert decibel (dB = deci-bel)', () => {
       // TODO: Implement scale factor support for prefixed special units
       expect(convert(30, 'dB', 'B')).toBe(3); // 30 dB = 3 B
       expect(convert(3, 'B', 'dB')).toBe(30); // 3 B = 30 dB
@@ -118,7 +118,7 @@ describe('Special Function Conversions', () => {
         expect(convert(1000, '1', 'B')).toBe(3);
       });
 
-      it.skip('should convert between Bel and decibel', () => {
+      it('should convert between Bel and decibel', () => {
         // TODO: Implement scale factor support for prefixed special units
         expect(convert(1, 'B', 'dB')).toBe(10); // 1 B = 10 dB
         expect(convert(10, 'dB', 'B')).toBe(1); // 10 dB = 1 B

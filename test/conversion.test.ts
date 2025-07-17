@@ -75,12 +75,13 @@ describe('Conversion errors', () => {
     expect(() => convert(1, 'Hz', 'kg')).toThrow(/incompatible dimensions/);
   });
 
-  it('should throw for special units in phase 1', () => {
-    expect(() => convert(25, 'Cel', '[degF]')).toThrow(/Special unit conversion/);
-    expect(() => convert(7, '[pH]', 'mol/L')).toThrow(/Special unit conversion/);
-    expect(() => convert(10, 'Np', '1')).toThrow(/Special unit conversion/);
-    expect(() => convert(20, 'dB', '1')).toThrow(/Special unit conversion/);
-    expect(() => convert(37, 'Cel', 'K')).toThrow(/Special unit conversion/);
+  it('should now support special unit conversions', () => {
+    // Special units are now supported!
+    expect(convert(25, 'Cel', '[degF]')).toBeCloseTo(77, 5);
+    expect(convert(7, '[pH]', 'mol/L')).toBeCloseTo(1e-7, 15);
+    expect(convert(10, 'Np', '1')).toBeCloseTo(22026.465794806718, 5);
+    expect(convert(20, 'dB', '1')).toBe(100); // 20 dB = 2 B = 10^2 = 100
+    expect(convert(37, 'Cel', 'K')).toBe(310.15);
   });
 
   it('should throw for unknown units', () => {
@@ -147,10 +148,10 @@ describe('isConvertible helper', () => {
     expect(isConvertible('Hz', 'kg')).toBe(false);
   });
 
-  it('should return false for special units in phase 1', () => {
-    expect(isConvertible('Cel', 'K')).toBe(false);
-    expect(isConvertible('[pH]', 'mol/L')).toBe(false);
-    expect(isConvertible('dB', '1')).toBe(false);
+  it('should return true for special units now that they are supported', () => {
+    expect(isConvertible('Cel', 'K')).toBe(true);
+    expect(isConvertible('[pH]', 'mol/L')).toBe(true);
+    expect(isConvertible('dB', '1')).toBe(true);
   });
 
   it('should return false for invalid units', () => {
