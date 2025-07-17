@@ -25,7 +25,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/atomic-ehr/atomic-ucum-2.git"
+    "url": "git+https://github.com/atomic-ehr/ucum.git"
   },
   "keywords": [
     "ucum",
@@ -38,9 +38,9 @@
   "author": "Atomic EHR",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/atomic-ehr/atomic-ucum-2/issues"
+    "url": "https://github.com/atomic-ehr/ucum/issues"
   },
-  "homepage": "https://github.com/atomic-ehr/atomic-ucum-2#readme",
+  "homepage": "https://github.com/atomic-ehr/ucum#readme",
   "devDependencies": {
     "@types/bun": "latest",
     "@types/xml2js": "^0.4.14",
