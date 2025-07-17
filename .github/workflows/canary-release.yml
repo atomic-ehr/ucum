@@ -42,9 +42,7 @@ jobs:
         run: bun test
       
       - name: Build
-        run: |
-          bun run build
-          bun run build:types
+        run: bun run build
       
       - name: Generate canary version
         id: version

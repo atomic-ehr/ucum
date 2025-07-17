@@ -157,8 +157,54 @@ bun install
 bun test
 
 # Type check
-bun tsc --noEmit
+bun run typecheck
+
+# Build the library
+bun run build
 ```
+
+### Release Process
+
+The library uses automated releases through GitHub Actions:
+
+1. **Canary Releases**: Every commit to `main` automatically publishes a canary version
+   - Format: `{version}-canary.{shortSHA}.{timestamp}`
+   - Install with: `npm install @atomic-ehr/ucum@canary`
+   - Automatically triggers playground repository updates
+
+2. **Version Releases**: Creating a git tag triggers a versioned release
+   - Tag format: `v{major}.{minor}.{patch}` (e.g., `v1.0.0`)
+   - Published to npm with the tagged version
+   - Creates a GitHub release
+
+3. **Manual Release**: Use the release script for local releases
+   ```bash
+   bun run scripts/release.ts patch  # or minor, major
+   ```
+
+### GitHub Actions Workflows
+
+- **CI** (`ci.yml`): Runs on all pushes and PRs to main/develop
+  - Type checking with TypeScript
+  - Full test suite with Bun
+
+- **Canary Release** (`canary-release.yml`): Runs on pushes to main
+  - Builds and publishes canary versions
+  - Skips commits with `[skip ci]` or `chore: release`
+
+- **Publish** (`publish.yml`): Runs on version tags
+  - Builds and publishes to npm
+  - Creates GitHub releases with changelog reference
+
+- **Trigger Playground** (`trigger-playground.yml`): Runs after canary releases
+  - Triggers rebuild of the atomic-ucum-playground repository
+
+### Required Secrets
+
+For the automated workflows to function, the following secrets must be configured in the GitHub repository:
+
+- `NPM_TOKEN`: npm authentication token for publishing packages
+- `ORG_PAT`: GitHub Personal Access Token for triggering cross-repository workflows
 
 ## Standards Compliance
 

@@ -34,3 +34,9 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 .DS_Store
 
 ucum-spec/.antlr/
+
+# Build artifacts in src (shouldn't be there)
+src/*.js
+src/*.cjs
+src/*.map
+!src/**/*.test.js

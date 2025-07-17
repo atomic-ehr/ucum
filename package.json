@@ -1,7 +1,46 @@
 {
   "name": "@atomic-ehr/ucum",
-  "module": "src/index.ts",
+  "version": "0.1.0",
+  "description": "TypeScript implementation of UCUM (Unified Code for Units of Measure)",
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "test": "bun test",
+    "typecheck": "bunx tsc --noEmit",
+    "build": "bun run build:clean && bun run build:types",
+    "build:clean": "rm -rf dist",
+    "build:types": "bunx tsc -p tsconfig.build.json",
+    "prepublishOnly": "bun run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atomic-ehr/atomic-ucum-2.git"
+  },
+  "keywords": [
+    "ucum",
+    "units",
+    "measure",
+    "measurement",
+    "conversion",
+    "typescript"
+  ],
+  "author": "Atomic EHR",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/atomic-ehr/atomic-ucum-2/issues"
+  },
+  "homepage": "https://github.com/atomic-ehr/atomic-ucum-2#readme",
   "devDependencies": {
     "@types/bun": "latest",
     "@types/xml2js": "^0.4.14",
