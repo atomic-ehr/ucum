@@ -41,3 +41,28 @@ export {
   getAllSpecialFunctionNames 
 } from './special-functions';
 export type { SpecialFunctionDef } from './special-functions';
+
+// Quantity type and operations
+export {
+  quantity,
+  add,
+  subtract,
+  multiply,
+  divide,
+  pow,
+  equals,
+  lessThan,
+  greaterThan,
+  lessThanOrEqual,
+  greaterThanOrEqual,
+  toUnit,
+  getValue,
+  areCompatible,
+  getDimension,
+  isSpecialUnit,
+  isArbitraryUnit,
+  areUnitsCompatible,
+  SpecialUnitArithmeticError,
+  ArbitraryUnitConversionError
+} from './quantity';
+export type { Quantity } from './quantity';
