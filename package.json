@@ -1,6 +1,6 @@
 {
   "name": "@atomic-ehr/ucum",
-  "version": "0.1.0",
+  "version": "0.2.4",
   "description": "TypeScript implementation of UCUM (Unified Code for Units of Measure)",
   "type": "module",
   "main": "./dist/index.js",
