@@ -33,3 +33,11 @@ export {
 // Unit validation
 export { validate } from './validation';
 export type { ValidationResult, ValidationError, ValidationWarning } from './validation';
+
+// Special functions
+export { 
+  getSpecialFunction, 
+  isSpecialFunction, 
+  getAllSpecialFunctionNames 
+} from './special-functions';
+export type { SpecialFunctionDef } from './special-functions';

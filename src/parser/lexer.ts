@@ -114,13 +114,38 @@ export class Lexer {
       if (this.position < this.input.length && this.input[this.position] === ']') {
         value += this.input[this.position++];
       }
-    } else if (char === '%' || char === "'") {
+    } else if (char === '%') {
+      value = char;
+      this.position++;
+      // Check if % is followed by a bracketed annotation like %[slope]
+      if (this.position < this.input.length && this.input[this.position] === '[') {
+        value += this.input[this.position++];
+        while (this.position < this.input.length && this.input[this.position] !== ']') {
+          value += this.input[this.position++];
+        }
+        if (this.position < this.input.length && this.input[this.position] === ']') {
+          value += this.input[this.position++];
+        }
+      }
+    } else if (char === "'") {
       value = char;
       this.position++;
     } else {
       // Read letters
       while (this.position < this.input.length && this.input[this.position] && (this.isLetter(this.input[this.position]) || this.input[this.position] === '_')) {
         value += this.input[this.position++];
+      }
+      
+      // Check if this is followed by a bracketed annotation like B[W] or B[SPL]
+      if (this.position < this.input.length && this.input[this.position] === '[') {
+        // This is part of the same atom
+        value += this.input[this.position++];
+        while (this.position < this.input.length && this.input[this.position] !== ']') {
+          value += this.input[this.position++];
+        }
+        if (this.position < this.input.length && this.input[this.position] === ']') {
+          value += this.input[this.position++];
+        }
       }
     }
     

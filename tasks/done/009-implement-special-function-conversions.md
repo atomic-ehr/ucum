@@ -278,3 +278,52 @@ expect(convert(1, 'B', 'Np')).toBeCloseTo(1.151293); // ln(10)/2
 - [concepts/special-units.md](../../concepts/special-units.md)
 - [UCUM Specification §24: Special Units](http://unitsofmeasure.org/ucum.html#section-Special-Units)
 - [scripts/extract-special-functions.ts](../../scripts/extract-special-functions.ts) - Analysis of special functions in UCUM
+
+## Completion Notes (2025-07-16)
+
+Successfully implemented special function conversions for UCUM with the following accomplishments:
+
+### What Was Done
+
+1. **Created `src/special-functions.ts`** with all 15 special functions:
+   - Temperature functions: Cel, degF, degRe
+   - Logarithmic functions: ln, lg, lgTimes2, ld, pH
+   - Trigonometric functions: tanTimes100, 100tan
+   - Homeopathic functions: hpX, hpC, hpM, hpQ
+   - Mathematical functions: sqrt
+
+2. **Updated conversion logic** in `src/conversion.ts`:
+   - Added `convertWithSpecialFunctions` function
+   - Proper handling of forward/inverse transformations
+   - Domain validation for special functions
+   - Correct magnitude handling for special vs regular units
+
+3. **Fixed lexer** to properly tokenize compound units like B[W], B[SPL], %[slope]
+
+4. **Created comprehensive tests** with 31 passing tests covering:
+   - All temperature conversions (°C ↔ °F ↔ K ↔ °Ré)
+   - pH and logarithmic conversions
+   - Decibel calculations with various references
+   - Trigonometric and homeopathic units
+   - Round-trip conversion accuracy
+   - Domain validation
+
+### Key Implementation Details
+
+- Special functions are registered in a Map for efficient lookup
+- Domain validation prevents invalid values (e.g., negative Kelvin)
+- Proper handling of magnitude conversions for units with reference values
+- Temperature conversions don't apply magnitude ratios (handled by functions)
+
+### Not Implemented (Future Work)
+
+- Scale factor support for prefixed special units (mCel, dB)
+- This requires additional work to extract and apply prefix scale factors
+- 3 tests are skipped pending this implementation
+
+### Test Results
+
+- 31 tests passing
+- 3 tests skipped (prefixed special units)
+- 0 tests failing
+- All core special function conversions working correctly
