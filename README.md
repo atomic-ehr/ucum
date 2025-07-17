@@ -1,6 +1,10 @@
 # @atomic-ehr/ucum
 
+[![npm version](https://badge.fury.io/js/@atomic-ehr%2Fucum.svg)](https://www.npmjs.com/package/@atomic-ehr/ucum)
+
 A fast, type-safe TypeScript implementation of the Unified Code for Units of Measure (UCUM).
+
+🚀 **[Try it online](https://atomic-ehr-ucum.vercel.app)** - Interactive demo with unit conversion, validation, and more!
 
 ## Overview
 
